@@ -10,9 +10,7 @@ const Hero = () => {
       <div className="hero-left">
         <h2>PREMIUM AUTOMOTIVE</h2>
         <div>
-            <div className="hero-hand-icon">
-                <p>Drive</p>
-            </div>
+            <p>Drive</p>
             <p>your dream</p>
             <p>car today</p>
         </div>

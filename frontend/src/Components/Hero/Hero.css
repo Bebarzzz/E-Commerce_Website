@@ -1,8 +1,7 @@
 .hero {
-  height: 100vh;
+  min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   display: flex;
-  overflow: hidden;
 }
 
 .hero-left {
@@ -32,17 +31,6 @@
   font-weight: 800;
   margin: 0;
   animation: fadeInLeft 1.2s ease;
-}
-
-.hero-hand-icon {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.hero-hand-icon img {
-  width: 105px;
-  animation: wave 2s infinite;
 }
 
 .hero-latest-btn {

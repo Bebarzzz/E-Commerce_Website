@@ -9,6 +9,7 @@ const userSchema = new Schema({
     username: {
         type: String,
         required: true,
+        unique: true,
     },
     email: {
         type: String,
@@ -24,7 +25,7 @@ const userSchema = new Schema({
 })
 
 
-userSchema.statics.signup = async function(email, password) {
+userSchema.statics.signup = async function(username, email, password) {
 
 
     // validation
@@ -42,11 +43,15 @@ userSchema.statics.signup = async function(email, password) {
     if (exists) {
         throw Error('Email already in use')
     }
+    const usernameExists = await this.findOne({ username })
+    if (usernameExists) {
+        throw Error('Username already in use')
+    }
 
     const salt = await bcrypt.genSalt(10)
     const hash = await bcrypt.hash(password, salt)
 
-    const user = await this.create({ email, password: hash })
+    const user = await this.create({ username, email, password: hash })
 
     return user
 }

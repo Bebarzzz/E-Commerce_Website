@@ -1,3 +1,4 @@
+// import dependencies
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require("cors")
@@ -5,6 +6,10 @@ const jwt = require("jsonwebtoken")
 const multer = require("multer")
 const path = require("path")
 require('dotenv').config()
+
+//import files 
+const userRoutes = require('./routes/user')
+
 
 
 // express app
@@ -20,7 +25,7 @@ app.use((req, res, next) => {
 })
 
 // routes
-
+app.use('/api/user', userRoutes)
 
 
 

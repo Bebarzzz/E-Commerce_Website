@@ -9,6 +9,8 @@ require('dotenv').config()
 
 //import files 
 const userRoutes = require('./routes/user')
+const carRoutes = require('./routes/car')
+const orderRoutes = require('./routes/order')
 
 
 
@@ -26,7 +28,8 @@ app.use((req, res, next) => {
 
 // routes
 app.use('/api/user', userRoutes)
-
+app.use('/api/car', carRoutes)
+app.use('/api/order', orderRoutes)
 
 
 
@@ -36,8 +39,8 @@ mongoose.connect("mongodb+srv://shalabox:123@ecommercewebsitedb.kplwrja.mongodb.
   .then(() => {
     console.log('connected to database')
     // listen to port
-    app.listen(process.env.PORT, () => {
-      console.log('listening for requests on port', process.env.PORT)
+    app.listen(4000, () => {
+      console.log('listening for requests on port', 4000)
     })
   })
   .catch((err) => {

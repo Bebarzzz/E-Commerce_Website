@@ -35,7 +35,7 @@ for message in st.session_state.messages:
         with st.chat_message("assistant"):
             st.markdown(message.content)
 
-prompt = st.chat_input("Ask me about cars, pricing, or booking a test drive! 🚘")
+prompt = st.chat_input("Ask me about cars, pricing, or booking a test drive!")
 
 if prompt:
 

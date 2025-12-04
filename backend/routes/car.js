@@ -1,7 +1,7 @@
 const express = require('express')
 const {
     addCar,
-    removeCar
+    removeCar,
 } = require('../controllers/carController')
 
 const router = express.Router()

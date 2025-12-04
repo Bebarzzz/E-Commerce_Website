@@ -10,6 +10,7 @@ require('dotenv').config()
 //import files 
 const userRoutes = require('./routes/user')
 const carRoutes = require('./routes/car')
+const orderRoutes = require('./routes/order')
 
 
 
@@ -28,6 +29,7 @@ app.use((req, res, next) => {
 // routes
 app.use('/api/user', userRoutes)
 app.use('/api/car', carRoutes)
+app.use('/api/order', orderRoutes)
 
 
 

@@ -1,7 +1,6 @@
 import streamlit as st
 import os
 from dotenv import load_dotenv
-
 from pinecone import Pinecone
 from langchain_pinecone import PineconeVectorStore
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
@@ -28,3 +27,10 @@ if "messages" not in st.session_state:
             "If you don't know an answer, say so, and suggest visiting the dealership or connecting with a sales agent."
         )
     )
+for message in st.session_state.messages:
+    if isinstance(message, HumanMessage):
+        with st.chat_message("user"):
+            st.markdown(message.content)
+    elif isinstance(message, AIMessage):
+        with st.chat_message("assistant"):
+            st.markdown(message.content)

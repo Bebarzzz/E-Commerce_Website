@@ -32,7 +32,7 @@ app.use('/api/user', userRoutes)
 
 
 // connect to db
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect("mongodb+srv://shalabox:123@ecommercewebsitedb.kplwrja.mongodb.net/ecommerce?appName=ECommerceWebsiteDB")
   .then(() => {
     console.log('connected to database')
     // listen to port

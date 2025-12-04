@@ -32,19 +32,15 @@ app.use('/api/car', carRoutes)
 app.use('/api/order', orderRoutes)
 
 
-
-
 // connect to db
-mongoose.connect("mongodb+srv://shalabox:123@ecommercewebsitedb.kplwrja.mongodb.net/ecommerce?appName=ECommerceWebsiteDB")
+mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('connected to database')
     // listen to port
-    app.listen(4000, () => {
-      console.log('listening for requests on port', 4000)
+    app.listen(process.env.PORT, () => {
+      console.log('listening for requests on port', process.env.PORT)
     })
   })
   .catch((err) => {
     console.log(err)
   }) 
-
-

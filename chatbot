@@ -49,4 +49,20 @@ if prompt:
         search_type="similarity_score_threshold",
         search_kwargs={"k": 3, "score_threshold": 0.5},
     )
+    docs = retriever.invoke(prompt)
+    docs_text = " ".join([d.page_content for d in docs])
+
+    # System prompt specialized for dealership chatbot
+    system_prompt = """
+    You are an interactive car dealership assistant.
+    Use the retrieved context to answer the customer's question clearly.
+    If appropriate, ask follow-up questions like:
+      - What is your budget?
+      - Are you looking for sedan, SUV, or electric?
+      - Do you prefer new or pre-owned?
+      - Would you like to schedule a test drive?
+    
+    Answer in a friendly tone. Maximum 4 sentences.
+    Context: {context}
+    """
 

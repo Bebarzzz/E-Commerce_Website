@@ -1,1 +1,30 @@
-hhh
+import streamlit as st
+import os
+from dotenv import load_dotenv
+
+from pinecone import Pinecone
+from langchain_pinecone import PineconeVectorStore
+from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
+
+load_dotenv()
+
+st.title("Car Dealership Assistant")
+pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
+index = pc.Index(os.environ.get("PINECONE_INDEX_NAME"))
+embeddings = OpenAIEmbeddings(
+    model="text-embedding-3-large",
+    api_key=os.environ.get("OPENAI_API_KEY")
+)
+
+vector_store = PineconeVectorStore(index=index, embedding=embeddings)
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+    st.session_state.messages.append(
+        SystemMessage(
+            "You are an interactive virtual sales assistant for a car dealership. "
+            "You help customers learn about car models, availability, prices, features, financing, and test drive booking. "
+            "Be friendly and proactive. Ask clarifying questions like budget, preferences, usage needs. "
+            "If you don't know an answer, say so, and suggest visiting the dealership or connecting with a sales agent."
+        )
+    )

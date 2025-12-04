@@ -34,3 +34,19 @@ for message in st.session_state.messages:
     elif isinstance(message, AIMessage):
         with st.chat_message("assistant"):
             st.markdown(message.content)
+
+prompt = st.chat_input("Ask me about cars, pricing, or booking a test drive! 🚘")
+
+if prompt:
+
+    with st.chat_message("user"):
+        st.markdown(prompt)
+    st.session_state.messages.append(HumanMessage(prompt))
+
+    llm = ChatOpenAI(model="gpt-4o", temperature=0.7)
+
+    retriever = vector_store.as_retriever(
+        search_type="similarity_score_threshold",
+        search_kwargs={"k": 3, "score_threshold": 0.5},
+    )
+

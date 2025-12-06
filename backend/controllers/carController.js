@@ -29,7 +29,24 @@ const addCar = async (req, res) => {
     }
 }
 
+const editCar = async (req, res) => {
+    const { carId, model, manufactureYear, brand, type, price } = req.body;
+
+    try {
+        const result = await Car.editCar(carId, { model, manufactureYear, brand, type, price });
+
+        if (result.success) {
+            res.status(200).json({ message: result.message, updatedCar: result.updatedCar });
+        } else {
+            res.status(404).json({ error: result.message });
+        }
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+}
+
 module.exports = {
     addCar,
     removeCar,
+    editCar,
 };

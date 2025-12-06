@@ -1,4 +1,5 @@
 const express = require('express')
+const { requireAuth, requireAdmin } = require('../middleware/requireAuth')
 const {
     addCar,
     removeCar,

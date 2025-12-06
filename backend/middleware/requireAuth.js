@@ -13,7 +13,7 @@ const requireAuth = async (req, res, next) => {
     try {
         const {_id} = jwt.verify(token, process.env.JWT_SECRET)
 
-        req.user = await User.findOne({ _id }).select('_id')
+        req.user = await User.findOne({ _id }).select('_id role')
         next()
     }
     catch (error) {
@@ -23,4 +23,12 @@ const requireAuth = async (req, res, next) => {
 
 }
 
-module.exports = requireAuth
+// Verify user has admin role
+const requireAdmin = (req, res, next) => {
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ error: 'Admin access required' })
+    }
+    next()
+}
+
+module.exports = { requireAuth, requireAdmin }

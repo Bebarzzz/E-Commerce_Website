@@ -7,7 +7,7 @@ const {
 
 const router = express.Router()
 
-
+router.get('/', getAllCars)
 router.post('/add', addCar)
 router.delete('/remove', removeCar)
 router.patch('/edit', editCar)

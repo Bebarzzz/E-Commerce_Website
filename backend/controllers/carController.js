@@ -45,6 +45,15 @@ const editCar = async (req, res) => {
     }
 }
 
+const getAllCars = async (req, res) => {
+    try {
+        const cars = await Car.find({}).sort({ createdAt: -1 });
+        res.status(200).json(cars);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+}
+
 module.exports = {
     addCar,
     removeCar,

@@ -79,5 +79,103 @@ carSchema.statics.removeCar = async function(carId) {
     return { success: true, deletedCar: result, message: 'Car successfully deleted.' };
 }
 
+carSchema.statics.editCar = async function(carId, updates) {
+
+    if (!carId) {
+
+        throw new Error('Car ID is required for update.')
+
+    }
+
+
+
+    if (!mongoose.Types.ObjectId.isValid(carId)) {
+
+        throw new Error('Invalid car ID format.')
+
+    }
+
+
+
+    const allowedFields = ['model', 'manufactureYear', 'brand', 'type', 'price']
+
+    const updatePayload = {}
+
+
+
+    // Only include allowed fields
+
+    for (const key of allowedFields) {
+
+        if (updates[key] !== undefined) {
+
+            updatePayload[key] = updates[key]
+
+        }
+
+    }
+
+
+
+    if (Object.keys(updatePayload).length === 0) {
+
+        throw new Error('No valid fields provided to update.')
+
+    }
+
+
+
+    // Validate price
+
+    if (updatePayload.price !== undefined) {
+
+        if (typeof updatePayload.price !== 'number' || updatePayload.price <= 0) {
+
+            throw new Error('Price must be a positive number.')
+
+        }
+
+    }
+
+
+
+    // Validate manufacture year
+
+    if (updatePayload.manufactureYear !== undefined) {
+
+        const currentYear = new Date().getFullYear()
+
+        if (typeof updatePayload.manufactureYear !== 'number' ||
+
+            updatePayload.manufactureYear > currentYear ||
+
+            updatePayload.manufactureYear < 1900) {
+
+            throw new Error(`Manufacture year must be between 1900 and ${currentYear}.`)
+
+        }
+
+    }
+
+
+
+    const updated = await this.findByIdAndUpdate(carId, updatePayload, { new: true })
+
+// check if the car was found and updated
+
+    if (!updated) {
+
+        return { success: false, message: `Car with ID ${carId} not found.` }
+
+    }
+
+
+
+    return { success: true, updatedCar: updated, message: 'Car updated successfully.' }
+
+}
+
+
+
 
 module.exports = mongoose.model('Car', carSchema)

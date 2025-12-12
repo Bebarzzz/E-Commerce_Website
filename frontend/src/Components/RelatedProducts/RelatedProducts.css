@@ -25,6 +25,14 @@
   gap: 30px;
 }
 
+.relatedproducts-item .item {
+    transition: transform 0.3s ease;
+}
+
+.relatedproducts-item .item:hover {
+    transform: translateY(-10px);
+}
+
 @media (max-width: 1280px) {
   .relatedproducts {
     height: auto;

@@ -6,8 +6,10 @@ import ShopCategory from './Pages/ShopCategory';
 import Product from './Pages/Product';
 import Cart from './Pages/Cart';
 import LoginSignup from './Pages/LoginSignup';
+import Checkout from './Pages/Checkout';
 
 function App() {
+  
   return (
     <div>
       <BrowserRouter>
@@ -21,6 +23,7 @@ function App() {
             <Route path=':productId' element={<Product />} />
           </Route>
           <Route path='/cart' element={<Cart />} />
+          <Route path='/checkout' element={<Checkout />} />
           <Route path='/login' element={<LoginSignup />} />
         </Routes>
       </BrowserRouter>

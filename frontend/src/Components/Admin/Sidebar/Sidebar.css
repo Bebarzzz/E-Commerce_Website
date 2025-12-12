@@ -1,0 +1,26 @@
+.admin-sidebar {
+    display: flex;
+    flex-direction: column;
+    padding-top: 30px;
+    gap: 20px;
+    width: 100%;
+    max-width: 250px;
+    height: 100vh;
+    background: white;
+    border-right: 1px solid #e0e0e0;
+}
+
+.admin-sidebar-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0px 20px;
+    padding: 10px 20px;
+    border-radius: 6px;
+    background: #f6f6f6;
+    cursor: pointer;
+}
+
+.admin-sidebar-item:hover {
+    background: #e2e2e2;
+}

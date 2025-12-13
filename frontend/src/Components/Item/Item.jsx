@@ -6,6 +6,11 @@ const Item = (props) => {
   return (
     <div className='item'>
         <Link to={`/product/${props.id}`}><img onClick={window.scrollTo(0,0)} src={props.image} alt="" /></Link>
+        {props.condition && (
+          <span className={`item-condition-badge ${props.condition}`}>
+            {props.condition === 'new' ? 'NEW' : 'USED'}
+          </span>
+        )}
         <p>{props.name}</p>
         <div className="item-prices">
             <div className="item-price-new">

@@ -43,6 +43,12 @@ const carSchema = new Schema({
         type: String,
         required: true
     },
+    condition: {
+        type: String,
+        enum: ['new', 'used'],
+        required: true,
+        lowercase: true
+    },
     images: {
         type: [String],
         default: []    
@@ -54,11 +60,11 @@ const carSchema = new Schema({
 
 })
 
-carSchema.statics.addNewCar = async function(model, manufactureYear, brand, type, price, engineCapacity, wheelDriveType, engineType, transmissionType, images = []) {
+carSchema.statics.addNewCar = async function(model, manufactureYear, brand, type, price, engineCapacity, wheelDriveType, engineType, transmissionType, condition, images = []) {
 
 
-    if (!model || !brand || !type || !price || !manufactureYear || !engineCapacity || !wheelDriveType || !engineType || !transmissionType) {
-        throw new Error('All fields (model, manufactureYear, brand, type, price, engineCapacity, wheelDriveType, engineType, transmissionType) are required.')
+    if (!model || !brand || !type || !price || !manufactureYear || !engineCapacity || !wheelDriveType || !engineType || !transmissionType || !condition) {
+        throw new Error('All fields (model, manufactureYear, brand, type, price, engineCapacity, wheelDriveType, engineType, transmissionType, condition) are required.')
     }
 
     if (typeof price !== 'number' || price <= 0) {
@@ -68,13 +74,17 @@ carSchema.statics.addNewCar = async function(model, manufactureYear, brand, type
     if (typeof engineCapacity !== 'number' || engineCapacity <= 0) {
         throw new Error('Engine capacity must be a positive number.')
     }
+
+    if (!['new', 'used'].includes(condition.toLowerCase())) {
+        throw new Error('Condition must be either "new" or "used".')
+    }
     
     const currentYear = new Date().getFullYear();
     if (typeof manufactureYear !== 'number' || manufactureYear > currentYear || manufactureYear < 1900) {
         throw new Error(`Manufacture year must be a valid year between 1900 and ${currentYear}.`)
     }
 
-    const car = await this.create({ model, manufactureYear, brand, type, price, engineCapacity, wheelDriveType, engineType, transmissionType, images })
+    const car = await this.create({ model, manufactureYear, brand, type, price, engineCapacity, wheelDriveType, engineType, transmissionType, condition: condition.toLowerCase(), images })
 
     return car
 }

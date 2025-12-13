@@ -9,8 +9,9 @@ The admin panel allows administrators to manage the car inventory with features 
 - **Route**: `/admin/add-car`
 - **Component**: `AddCar.jsx`
 - **Features**:
-  - Multi-field form (Brand, Model, Year, Type, Price)
+  - Multi-field form (Brand, Model, Year, Type, Price, Condition)
   - Engine specifications (Capacity, Type, Transmission, Drive Type)
+  - Condition selection (New/Used)
   - Upload up to 5 images per car (5MB limit each)
   - Image preview before upload
   - Real-time validation
@@ -43,7 +44,7 @@ frontend/src/
 - **POST** `/api/car` - Add new car with images
   - Requires admin authentication
   - Accepts multipart/form-data
-  - Fields: model, manufactureYear, brand, type, price, engineCapacity, wheelDriveType, engineType, transmissionType, images[]
+  - Fields: model, manufactureYear, brand, type, price, engineCapacity, wheelDriveType, engineType, transmissionType, condition, images[]
 
 ### Middleware
 - `requireAuth` - Verifies JWT token

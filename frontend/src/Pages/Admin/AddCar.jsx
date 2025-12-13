@@ -12,7 +12,8 @@ const AddCar = () => {
     engineCapacity: '',
     wheelDriveType: '',
     engineType: '',
-    transmissionType: ''
+    transmissionType: '',
+    condition: ''
   });
 
   const [images, setImages] = useState([]);
@@ -132,7 +133,7 @@ const AddCar = () => {
     setMessage({ text: '', type: '' });
 
     // Validation
-    if (!carData.model || !carData.manufactureYear || !carData.brand || !carData.type || !carData.price || !carData.engineCapacity || !carData.wheelDriveType || !carData.engineType || !carData.transmissionType) {
+    if (!carData.model || !carData.manufactureYear || !carData.brand || !carData.type || !carData.price || !carData.engineCapacity || !carData.wheelDriveType || !carData.engineType || !carData.transmissionType || !carData.condition) {
       setMessage({ text: 'All fields are required', type: 'error' });
       setLoading(false);
       return;
@@ -155,6 +156,7 @@ const AddCar = () => {
       formData.append('wheelDriveType', carData.wheelDriveType);
       formData.append('engineType', carData.engineType);
       formData.append('transmissionType', carData.transmissionType);
+      formData.append('condition', carData.condition);
 
       // Append all images
       images.forEach((image) => {
@@ -185,7 +187,8 @@ const AddCar = () => {
           engineCapacity: '',
           wheelDriveType: '',
           engineType: '',
-          transmissionType: ''
+          transmissionType: '',
+          condition: ''
         });
         setImages([]);
         setImagePreviews([]);
@@ -273,19 +276,36 @@ const AddCar = () => {
             </div>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="price">Price ($) *</label>
-            <input
-              type="number"
-              id="price"
-              name="price"
-              value={carData.price}
-              onChange={handleInputChange}
-              placeholder="e.g., 25000"
-              min="0"
-              step="0.01"
-              required
-            />
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="condition">Condition *</label>
+              <select
+                id="condition"
+                name="condition"
+                value={carData.condition}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="">Select Condition</option>
+                <option value="new">New</option>
+                <option value="used">Used</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="price">Price ($) *</label>
+              <input
+                type="number"
+                id="price"
+                name="price"
+                value={carData.price}
+                onChange={handleInputChange}
+                placeholder="e.g., 25000"
+                min="0"
+                step="0.01"
+                required
+              />
+            </div>
           </div>
 
           <div className="form-row">

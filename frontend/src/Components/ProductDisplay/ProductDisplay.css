@@ -52,6 +52,29 @@
   font-weight: 700;
 }
 
+.condition-badge {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 15px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.condition-badge.new {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.condition-badge.used {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(240, 147, 251, 0.3);
+}
+
 .productdisplay-right-stars {
   display: flex;
   align-items: center;

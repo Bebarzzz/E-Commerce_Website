@@ -27,9 +27,16 @@ const LoginSignup = () => {
     }).then((response) => response.json()).then((data) => responseData = data)
 
     if (responseData.token) {
-      localStorage.setItem('auth-token', responseData.token);
+      localStorage.setItem('token', responseData.token);
       localStorage.setItem('user-email', formData.email);
-      window.location.replace("/");
+      localStorage.setItem('user-role', responseData.role || 'user');
+      
+      // Redirect admin users to admin panel, regular users to home
+      if (responseData.role === 'admin') {
+        window.location.replace("/admin");
+      } else {
+        window.location.replace("/");
+      }
     }
     else {
       alert(responseData.error)
@@ -49,9 +56,16 @@ const LoginSignup = () => {
     }).then((response) => response.json()).then((data) => responseData = data)
 
     if (responseData.token) {
-      localStorage.setItem('auth-token', responseData.token);
+      localStorage.setItem('token', responseData.token);
       localStorage.setItem('user-email', formData.email);
-      window.location.replace("/");
+      localStorage.setItem('user-role', responseData.role || 'user');
+      
+      // Redirect admin users to admin panel, regular users to home
+      if (responseData.role === 'admin') {
+        window.location.replace("/admin");
+      } else {
+        window.location.replace("/");
+      }
     }
     else {
       alert(responseData.error)

@@ -126,6 +126,28 @@
   transform: translateY(0);
 }
 
+.logout-btn {
+  background: #ff4141 !important;
+  color: white !important;
+  border-color: #ff4141 !important;
+}
+
+.logout-btn:hover {
+  background: #e03535 !important;
+  box-shadow: 0 5px 15px rgba(255, 65, 65, 0.4) !important;
+}
+
+.admin-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  border: none !important;
+}
+
+.admin-btn:hover {
+  background: linear-gradient(135deg, #5568d3 0%, #65408b 100%) !important;
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4) !important;
+}
+
 .nav-cart-count {
   width: 20px;
   height: 20px;

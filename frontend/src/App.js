@@ -7,6 +7,9 @@ import Product from './Pages/Product';
 import Cart from './Pages/Cart';
 import LoginSignup from './Pages/LoginSignup';
 import Checkout from './Pages/Checkout';
+import AddCar from './Pages/Admin/AddCar';
+import AdminDashboard from './Pages/Admin/AdminDashboard';
+import ProtectedAdminRoute from './Components/ProtectedAdminRoute';
 
 function App() {
   
@@ -25,6 +28,16 @@ function App() {
           <Route path='/cart' element={<Cart />} />
           <Route path='/checkout' element={<Checkout />} />
           <Route path='/login' element={<LoginSignup />} />
+          <Route path='/admin' element={
+            <ProtectedAdminRoute>
+              <AdminDashboard />
+            </ProtectedAdminRoute>
+          } />
+          <Route path='/admin/add-car' element={
+            <ProtectedAdminRoute>
+              <AddCar />
+            </ProtectedAdminRoute>
+          } />
         </Routes>
       </BrowserRouter>
     </div>

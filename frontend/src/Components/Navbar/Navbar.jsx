@@ -1,6 +1,6 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import './Navbar.css'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ShopContext } from '../../Context/ShopContext';
 
 import logo from '../Assets/logo.png'
@@ -8,7 +8,27 @@ import cart_icon from '../Assets/cart_icon.png'
 export const Navbar = () => {
 
   const [menu,setMenu] = useState("Inventory");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState('');
   const { getTotalCartItems } = useContext(ShopContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if user is logged in
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('user-role');
+    setIsLoggedIn(!!token);
+    setUserRole(role || '');
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user-email');
+    localStorage.removeItem('user-role');
+    setIsLoggedIn(false);
+    setUserRole('');
+    navigate('/login');
+  };
 
   return (
     <div className='navbar'>
@@ -25,7 +45,16 @@ export const Navbar = () => {
         <li onClick={() => setMenu("Offers")}><Link style={{ textDecoration: 'none' }} to='/offers'>Offers</Link>{menu === "Offers" && <hr />}</li>
       </ul>
       <div className="nav-login-cart">
-        <Link to='/login'><button>Login</button></Link>
+        {!isLoggedIn ? (
+          <Link to='/login'><button>Login</button></Link>
+        ) : (
+          <>
+            {userRole === 'admin' && (
+              <Link to='/admin'><button className='admin-btn'>Admin Panel</button></Link>
+            )}
+            <button onClick={handleLogout} className='logout-btn'>Logout</button>
+          </>
+        )}
         <div className="nav-cart-container">
           <Link to='/cart'><img src={cart_icon} alt="" /></Link>
           <div className="nav-cart-count">{getTotalCartItems()}</div>

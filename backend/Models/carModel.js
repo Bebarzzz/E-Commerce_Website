@@ -26,13 +26,19 @@ const carSchema = new Schema({
     price: {
         type: Number,
         required: true
-    }
+    },
+    images: {
+        type: [String],
+        default: []    
+    },
+
+
     
 }, { timestamps: true 
 
 })
 
-carSchema.statics.addNewCar = async function(model, manufactureYear, brand, type, price) {
+carSchema.statics.addNewCar = async function(model, manufactureYear, brand, type, price, images = []) {
 
 
     if (!model || !brand || !type || !price || !manufactureYear) {
@@ -48,7 +54,7 @@ carSchema.statics.addNewCar = async function(model, manufactureYear, brand, type
         throw new Error(`Manufacture year must be a valid year between 1900 and ${currentYear}.`)
     }
 
-    const car = await this.create({ model, manufactureYear, brand, type, price })
+    const car = await this.create({ model, manufactureYear, brand, type, price, images })
 
     return car
 }
@@ -97,7 +103,7 @@ carSchema.statics.editCar = async function(carId, updates) {
 
 
 
-    const allowedFields = ['model', 'manufactureYear', 'brand', 'type', 'price']
+    const allowedFields = ['model', 'manufactureYear', 'brand', 'type', 'price', 'images']
 
     const updatePayload = {}
 

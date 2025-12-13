@@ -21,7 +21,17 @@ const addCar = async (req, res) => {
     const { model, manufactureYear, brand, type, price } = req.body;
 
     try {
-        const car = await Car.addNewCar(model, manufactureYear, brand, type, price);
+        // Get image URLs from uploaded files
+        const images = req.files ? req.files.map(file => file.location) : [];
+
+        const car = await Car.addNewCar(
+            model, 
+            parseInt(manufactureYear), 
+            brand, 
+            type, 
+            parseFloat(price),
+            images
+        );
 
         res.status(201).json(car);
     } catch (error) {
@@ -33,7 +43,15 @@ const editCar = async (req, res) => {
     const { carId, model, manufactureYear, brand, type, price } = req.body;
 
     try {
-        const result = await Car.editCar(carId, { model, manufactureYear, brand, type, price });
+        const updateData = { model, manufactureYear, brand, type, price };
+        
+        // Add new images if uploaded
+        if (req.files && req.files.length > 0) {
+            const newImages = req.files.map(file => file.location);
+            updateData.images = newImages;
+        }
+        
+        const result = await Car.editCar(carId, updateData);
 
         if (result.success) {
             res.status(200).json({ message: result.message, updatedCar: result.updatedCar });

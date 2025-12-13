@@ -15,6 +15,13 @@ const Item = (props) => {
                 ${props.old_price}
             </div>
         </div>
+        {(props.engineCapacity || props.transmissionType) && (
+          <div className="item-specs">
+            {props.engineCapacity && <span className="item-spec-badge">{props.engineCapacity}L</span>}
+            {props.transmissionType && <span className="item-spec-badge">{props.transmissionType}</span>}
+            {props.wheelDriveType && <span className="item-spec-badge">{props.wheelDriveType}</span>}
+          </div>
+        )}
     </div>
   )
 }

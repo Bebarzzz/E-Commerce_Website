@@ -29,6 +29,40 @@ const ProductDisplay = (props) => {
         <div className="productdisplay-right-description">
             Experience the thrill of the road with this exceptional vehicle. Combining performance, comfort, and style, it's designed to elevate your driving experience.
         </div>
+        
+        {/* Car Specifications */}
+        {(product.engineCapacity || product.wheelDriveType || product.engineType || product.transmissionType) && (
+          <div className="productdisplay-specifications">
+            <h3>Specifications</h3>
+            <div className="specs-grid">
+              {product.engineCapacity && (
+                <div className="spec-item">
+                  <span className="spec-label">Engine Capacity:</span>
+                  <span className="spec-value">{product.engineCapacity}L</span>
+                </div>
+              )}
+              {product.engineType && (
+                <div className="spec-item">
+                  <span className="spec-label">Engine Type:</span>
+                  <span className="spec-value">{product.engineType}</span>
+                </div>
+              )}
+              {product.wheelDriveType && (
+                <div className="spec-item">
+                  <span className="spec-label">Drive Type:</span>
+                  <span className="spec-value">{product.wheelDriveType}</span>
+                </div>
+              )}
+              {product.transmissionType && (
+                <div className="spec-item">
+                  <span className="spec-label">Transmission:</span>
+                  <span className="spec-value">{product.transmissionType}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        
         <div className="productdisplay-right-actions">
           <button onClick={()=>{addToCart(product.id)}}>ADD TO CART</button>
         </div>

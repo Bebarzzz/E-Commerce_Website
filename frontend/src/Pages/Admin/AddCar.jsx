@@ -8,15 +8,23 @@ const AddCar = () => {
     manufactureYear: '',
     brand: '',
     type: '',
-    price: ''
+    price: '',
+    engineCapacity: '',
+    wheelDriveType: '',
+    engineType: '',
+    transmissionType: ''
   });
 
   const [images, setImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
+  const [isDragging, setIsDragging] = useState(false);
 
   const carTypes = ['Sedan', 'SUV', 'Truck', 'Coupe', 'Convertible', 'Hatchback', 'Van', 'Wagon'];
+  const wheelDriveTypes = ['FWD', 'RWD', 'AWD', '4WD'];
+  const engineTypes = ['Gasoline', 'Diesel', 'Electric', 'Hybrid', 'Plug-in Hybrid'];
+  const transmissionTypes = ['Manual', 'Automatic', 'CVT', 'Semi-Automatic', 'Dual-Clutch'];
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -60,13 +68,71 @@ const AddCar = () => {
     setImagePreviews(prev => prev.filter((_, i) => i !== index));
   };
 
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const files = Array.from(e.dataTransfer.files);
+    
+    // Filter only image files
+    const imageFiles = files.filter(file => file.type.startsWith('image/'));
+    
+    if (imageFiles.length === 0) {
+      setMessage({ text: 'Please drop only image files', type: 'error' });
+      return;
+    }
+
+    if (imageFiles.length + images.length > 5) {
+      setMessage({ text: 'Maximum 5 images allowed', type: 'error' });
+      return;
+    }
+
+    // Validate file sizes (5MB each)
+    const validFiles = imageFiles.filter(file => {
+      if (file.size > 5 * 1024 * 1024) {
+        setMessage({ text: `${file.name} is too large. Max size is 5MB`, type: 'error' });
+        return false;
+      }
+      return true;
+    });
+
+    setImages(prev => [...prev, ...validFiles]);
+
+    // Create previews
+    validFiles.forEach(file => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreviews(prev => [...prev, reader.result]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage({ text: '', type: '' });
 
     // Validation
-    if (!carData.model || !carData.manufactureYear || !carData.brand || !carData.type || !carData.price) {
+    if (!carData.model || !carData.manufactureYear || !carData.brand || !carData.type || !carData.price || !carData.engineCapacity || !carData.wheelDriveType || !carData.engineType || !carData.transmissionType) {
       setMessage({ text: 'All fields are required', type: 'error' });
       setLoading(false);
       return;
@@ -85,6 +151,10 @@ const AddCar = () => {
       formData.append('brand', carData.brand);
       formData.append('type', carData.type);
       formData.append('price', carData.price);
+      formData.append('engineCapacity', carData.engineCapacity);
+      formData.append('wheelDriveType', carData.wheelDriveType);
+      formData.append('engineType', carData.engineType);
+      formData.append('transmissionType', carData.transmissionType);
 
       // Append all images
       images.forEach((image) => {
@@ -111,7 +181,11 @@ const AddCar = () => {
           manufactureYear: '',
           brand: '',
           type: '',
-          price: ''
+          price: '',
+          engineCapacity: '',
+          wheelDriveType: '',
+          engineType: '',
+          transmissionType: ''
         });
         setImages([]);
         setImagePreviews([]);
@@ -214,6 +288,73 @@ const AddCar = () => {
             />
           </div>
 
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="engineCapacity">Engine Capacity (L) *</label>
+              <input
+                type="number"
+                id="engineCapacity"
+                name="engineCapacity"
+                value={carData.engineCapacity}
+                onChange={handleInputChange}
+                placeholder="e.g., 2.5, 3.0, 5.7"
+                min="0"
+                step="0.1"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="wheelDriveType">Wheel Drive Type *</label>
+              <select
+                id="wheelDriveType"
+                name="wheelDriveType"
+                value={carData.wheelDriveType}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="">Select Drive Type</option>
+                {wheelDriveTypes.map(type => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="engineType">Engine Type *</label>
+              <select
+                id="engineType"
+                name="engineType"
+                value={carData.engineType}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="">Select Engine Type</option>
+                {engineTypes.map(type => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="transmissionType">Transmission Type *</label>
+              <select
+                id="transmissionType"
+                name="transmissionType"
+                value={carData.transmissionType}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="">Select Transmission</option>
+                {transmissionTypes.map(type => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
           <div className="form-group">
             <label htmlFor="images">Car Images * (Max 5, 5MB each)</label>
             <input
@@ -224,10 +365,17 @@ const AddCar = () => {
               onChange={handleImageChange}
               className="file-input"
             />
-            <div className="file-input-label">
-              <span>📸 Choose Images</span>
+            <label 
+              htmlFor="images" 
+              className={`file-input-label ${isDragging ? 'dragging' : ''}`}
+              onDragEnter={handleDragEnter}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
+              <span>📸 {isDragging ? 'Drop images here!' : 'Choose Images or Drag & Drop'}</span>
               <small>{images.length}/5 selected</small>
-            </div>
+            </label>
           </div>
 
           {imagePreviews.length > 0 && (

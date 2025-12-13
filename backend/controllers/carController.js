@@ -18,7 +18,7 @@ const removeCar = async (req, res) => {
 }
 
 const addCar = async (req, res) => {
-    const { model, manufactureYear, brand, type, price } = req.body;
+    const { model, manufactureYear, brand, type, price, engineCapacity, wheelDriveType, engineType, transmissionType } = req.body;
 
     try {
         // Get image URLs from uploaded files
@@ -30,6 +30,10 @@ const addCar = async (req, res) => {
             brand, 
             type, 
             parseFloat(price),
+            parseFloat(engineCapacity),
+            wheelDriveType,
+            engineType,
+            transmissionType,
             images
         );
 
@@ -40,10 +44,10 @@ const addCar = async (req, res) => {
 }
 
 const editCar = async (req, res) => {
-    const { carId, model, manufactureYear, brand, type, price } = req.body;
+    const { carId, model, manufactureYear, brand, type, price, engineCapacity, wheelDriveType, engineType, transmissionType } = req.body;
 
     try {
-        const updateData = { model, manufactureYear, brand, type, price };
+        const updateData = { model, manufactureYear, brand, type, price, engineCapacity, wheelDriveType, engineType, transmissionType };
         
         // Add new images if uploaded
         if (req.files && req.files.length > 0) {

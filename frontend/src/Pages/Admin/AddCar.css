@@ -139,6 +139,13 @@
   background-color: #edf2f7;
 }
 
+.file-input-label.dragging {
+  border-color: #667eea;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+}
+
 .file-input-label span {
   font-weight: 600;
   color: #4a5568;

@@ -133,7 +133,7 @@ carSchema.statics.editCar = async function(carId, updates) {
 
 
 
-    const allowedFields = ['model', 'manufactureYear', 'brand', 'type', 'price', 'images']
+    const allowedFields = ['model', 'manufactureYear', 'brand', 'type', 'price', 'engineCapacity', 'wheelDriveType', 'engineType', 'transmissionType', 'condition', 'images']
 
     const updatePayload = {}
 
@@ -171,6 +171,21 @@ carSchema.statics.editCar = async function(carId, updates) {
 
         }
 
+    }
+
+    // Validate engine capacity
+    if (updatePayload.engineCapacity !== undefined) {
+        if (typeof updatePayload.engineCapacity !== 'number' || updatePayload.engineCapacity <= 0) {
+            throw new Error('Engine capacity must be a positive number.')
+        }
+    }
+
+    // Validate condition
+    if (updatePayload.condition !== undefined) {
+        if (!['new', 'used'].includes(updatePayload.condition.toLowerCase())) {
+            throw new Error('Condition must be either "new" or "used".')
+        }
+        updatePayload.condition = updatePayload.condition.toLowerCase();
     }
 
 

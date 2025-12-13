@@ -2,10 +2,10 @@ const Car = require('../Models/carModel')
 
 
 const removeCar = async (req, res) => {
-    const { carId } = req.body;
+    const { id } = req.params;
 
     try {
-        const result = await Car.removeCar(carId);
+        const result = await Car.removeCar(id);
 
         if (result.success) {
             res.status(200).json({ message: result.message, deletedCar: result.deletedCar });
@@ -45,7 +45,8 @@ const addCar = async (req, res) => {
 }
 
 const editCar = async (req, res) => {
-    const { carId, model, manufactureYear, brand, type, price, engineCapacity, wheelDriveType, engineType, transmissionType, condition } = req.body;
+    const { id } = req.params;
+    const { model, manufactureYear, brand, type, price, engineCapacity, wheelDriveType, engineType, transmissionType, condition } = req.body;
 
     try {
         const updateData = { model, manufactureYear, brand, type, price, engineCapacity, wheelDriveType, engineType, transmissionType, condition };
@@ -56,7 +57,7 @@ const editCar = async (req, res) => {
             updateData.images = newImages;
         }
         
-        const result = await Car.editCar(carId, updateData);
+        const result = await Car.editCar(id, updateData);
 
         if (result.success) {
             res.status(200).json({ message: result.message, updatedCar: result.updatedCar });

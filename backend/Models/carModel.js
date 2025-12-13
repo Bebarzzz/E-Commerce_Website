@@ -27,6 +27,28 @@ const carSchema = new Schema({
         type: Number,
         required: true
     },
+    engineCapacity: {
+        type: Number,
+        required: true
+    },
+    wheelDriveType: {
+        type: String,
+        required: true
+    },
+    engineType: {
+        type: String,
+        required: true
+    },
+    transmissionType: {
+        type: String,
+        required: true
+    },
+    condition: {
+        type: String,
+        enum: ['new', 'used'],
+        required: true,
+        lowercase: true
+    },
     images: {
         type: [String],
         default: []    
@@ -38,15 +60,23 @@ const carSchema = new Schema({
 
 })
 
-carSchema.statics.addNewCar = async function(model, manufactureYear, brand, type, price, images = []) {
+carSchema.statics.addNewCar = async function(model, manufactureYear, brand, type, price, engineCapacity, wheelDriveType, engineType, transmissionType, condition, images = []) {
 
 
-    if (!model || !brand || !type || !price || !manufactureYear) {
-        throw new Error('All fields (model, manufactureYear, brand, type, price) are required.')
+    if (!model || !brand || !type || !price || !manufactureYear || !engineCapacity || !wheelDriveType || !engineType || !transmissionType || !condition) {
+        throw new Error('All fields (model, manufactureYear, brand, type, price, engineCapacity, wheelDriveType, engineType, transmissionType, condition) are required.')
     }
 
     if (typeof price !== 'number' || price <= 0) {
         throw new Error('Price must be a positive number.')
+    }
+
+    if (typeof engineCapacity !== 'number' || engineCapacity <= 0) {
+        throw new Error('Engine capacity must be a positive number.')
+    }
+
+    if (!['new', 'used'].includes(condition.toLowerCase())) {
+        throw new Error('Condition must be either "new" or "used".')
     }
     
     const currentYear = new Date().getFullYear();
@@ -54,7 +84,7 @@ carSchema.statics.addNewCar = async function(model, manufactureYear, brand, type
         throw new Error(`Manufacture year must be a valid year between 1900 and ${currentYear}.`)
     }
 
-    const car = await this.create({ model, manufactureYear, brand, type, price, images })
+    const car = await this.create({ model, manufactureYear, brand, type, price, engineCapacity, wheelDriveType, engineType, transmissionType, condition: condition.toLowerCase(), images })
 
     return car
 }
@@ -103,7 +133,7 @@ carSchema.statics.editCar = async function(carId, updates) {
 
 
 
-    const allowedFields = ['model', 'manufactureYear', 'brand', 'type', 'price', 'images']
+    const allowedFields = ['model', 'manufactureYear', 'brand', 'type', 'price', 'engineCapacity', 'wheelDriveType', 'engineType', 'transmissionType', 'condition', 'images']
 
     const updatePayload = {}
 
@@ -141,6 +171,21 @@ carSchema.statics.editCar = async function(carId, updates) {
 
         }
 
+    }
+
+    // Validate engine capacity
+    if (updatePayload.engineCapacity !== undefined) {
+        if (typeof updatePayload.engineCapacity !== 'number' || updatePayload.engineCapacity <= 0) {
+            throw new Error('Engine capacity must be a positive number.')
+        }
+    }
+
+    // Validate condition
+    if (updatePayload.condition !== undefined) {
+        if (!['new', 'used'].includes(updatePayload.condition.toLowerCase())) {
+            throw new Error('Condition must be either "new" or "used".')
+        }
+        updatePayload.condition = updatePayload.condition.toLowerCase();
     }
 
 

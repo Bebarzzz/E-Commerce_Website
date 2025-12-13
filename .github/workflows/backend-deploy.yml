@@ -3,7 +3,7 @@ name: Deploy Backend to EC2
 on:
   push:
     branches:
-      - deployment
+      - main
     paths:
       - 'backend/**'
       - '.github/workflows/backend-deploy.yml'
@@ -56,7 +56,7 @@ jobs:
           script: |
             cd /home/ubuntu/E-Commerce_Website
             git fetch origin
-            git reset --hard origin/deployment
+            git reset --hard origin/main
             cd backend
             npm install --production
             pm2 restart ecommerce-backend || pm2 start server.js --name ecommerce-backend

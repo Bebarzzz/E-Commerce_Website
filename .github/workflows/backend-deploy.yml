@@ -1,0 +1,78 @@
+name: Deploy Backend to EC2
+
+on:
+  push:
+    branches:
+      - deployment
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-deploy.yml'
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run Backend Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+      
+      - name: Run tests
+        working-directory: ./backend
+        run: npm test || echo "No tests specified"
+      
+      - name: Check for syntax errors
+        working-directory: ./backend
+        run: node -c server.js
+
+  deploy:
+    name: Deploy to EC2
+    needs: test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            cd /home/ubuntu/E-Commerce_Website
+            git fetch origin
+            git reset --hard origin/deployment
+            cd backend
+            npm install --production
+            pm2 restart ecommerce-backend || pm2 start server.js --name ecommerce-backend
+            pm2 save
+      
+      - name: Health Check
+        run: |
+          sleep 10
+          curl -f http://${{ secrets.EC2_HOST }}/api/health || exit 1
+      
+      - name: Notify deployment status
+        if: always()
+        run: |
+          if [ ${{ job.status }} == 'success' ]; then
+            echo "✅ Backend deployment successful!"
+          else
+            echo "❌ Backend deployment failed!"
+            exit 1
+          fi

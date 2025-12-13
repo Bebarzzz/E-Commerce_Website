@@ -1,0 +1,32 @@
+# Root .gitignore for E-Commerce Website
+
+# Environment variables
+.env
+.env.local
+.env.production.local
+.env.development.local
+
+# Dependencies
+node_modules/
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# AWS
+.aws/
+
+# SSH Keys
+*.pem
+*.key
+
+# Temporary files
+*.tmp
+*.temp
+.cache/

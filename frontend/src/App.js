@@ -9,7 +9,7 @@ import LoginSignup from './Pages/LoginSignup';
 import Checkout from './Pages/Checkout';
 
 function App() {
-  
+
   return (
     <div>
       <BrowserRouter>

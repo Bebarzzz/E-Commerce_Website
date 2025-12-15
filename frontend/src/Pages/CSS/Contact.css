@@ -1,0 +1,124 @@
+.contact {
+    width: 100%;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 0;
+}
+
+.contact-container {
+    width: 580px;
+    max-width: 90%;
+    background: white;
+    padding: 40px 60px;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.contact-container h1 {
+    margin: 10px 0px 30px;
+    color: #171717;
+    font-size: 36px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.contact-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.contact-fields input,
+.contact-fields textarea {
+    width: 100%;
+    padding-left: 25px;
+    border: 1px solid #e0e0e0;
+    outline: none;
+    color: #333;
+    font-size: 18px;
+    border-radius: 25px;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.contact-fields input {
+    height: 65px;
+    border-radius: 50px;
+}
+
+.contact-fields textarea {
+    height: 150px;
+    padding-top: 20px;
+    resize: none;
+    border-radius: 30px;
+}
+
+.contact-fields input:focus,
+.contact-fields textarea:focus {
+    border-color: #ff4141;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(255, 65, 65, 0.1);
+}
+
+.contact-btn {
+    width: 100%;
+    height: 65px;
+    color: white;
+    background: #ff4141;
+    margin-top: 30px;
+    border: none;
+    font-size: 22px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(255, 65, 65, 0.2);
+}
+
+.contact-btn:hover {
+    background: #e60000;
+    transform: translateY(-3px);
+    box-shadow: 0 15px 25px rgba(255, 65, 65, 0.3);
+}
+
+.contact-btn:active {
+    transform: translateY(-1px);
+}
+
+@media(max-width: 800px) {
+    .contact-container {
+        padding: 30px;
+    }
+
+    .contact-container h1 {
+        font-size: 28px;
+    }
+
+    .contact-fields input {
+        height: 55px;
+        font-size: 16px;
+    }
+
+    .contact-btn {
+        height: 55px;
+        font-size: 18px;
+    }
+}

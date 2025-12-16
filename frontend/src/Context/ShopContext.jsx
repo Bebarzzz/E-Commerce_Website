@@ -23,7 +23,6 @@ const ShopContextProvider = (props) => {
           category: car.condition,
           image: car.images && car.images.length > 0 ? car.images[0] : null,
           new_price: car.price,
-          old_price: car.price * 1.1, // Example: 10% markup for old price
           // Keep all original backend fields
           ...car
         }));
@@ -93,7 +92,6 @@ const ShopContextProvider = (props) => {
         category: car.condition,
         image: car.images && car.images.length > 0 ? car.images[0] : null,
         new_price: car.price,
-        old_price: car.price * 1.1,
         ...car
       }));
       setAllProducts(transformedCars);

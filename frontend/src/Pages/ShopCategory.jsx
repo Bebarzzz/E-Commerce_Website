@@ -5,9 +5,17 @@ import Item from '../Components/Item/Item'
 import SearchBar from '../Components/SearchBar/SearchBar'
 
 const ShopCategory = (props) => {
-  const { all_product } = useContext(ShopContext);
+  const { all_product, loading, error } = useContext(ShopContext);
   const [sortType, setSortType] = useState('default');
   const [searchQuery, setSearchQuery] = useState('');
+
+  if (loading) {
+    return <div style={{textAlign: 'center', padding: '50px'}}>Loading products...</div>
+  }
+
+  if (error) {
+    return <div style={{textAlign: 'center', padding: '50px', color: 'red'}}>Error loading products: {error}</div>
+  }
 
   const categoryProducts = all_product.filter(item => {
     const isCategoryMatch = item.category === props.category;
@@ -23,7 +31,7 @@ const ShopCategory = (props) => {
 
   return (
     <div className='shop-category'>
-      <img className='shopcategory-banner' src={props.banner} alt="" />
+      {props.banner && <img className='shopcategory-banner' src={props.banner} alt="" />}
       <SearchBar onSearch={setSearchQuery} />
       <div className="shopcategory-indexSort">
         <p>
@@ -38,9 +46,15 @@ const ShopCategory = (props) => {
         </div>
       </div>
       <div className="shopcategory-products">
-        {sortedProducts.map((item, i) => {
-          return <Item key={i} id={item.id} name={item.name} image={item.image} new_price={item.new_price} old_price={item.old_price} />
-        })}
+        {sortedProducts.length > 0 ? (
+          sortedProducts.map((item, i) => {
+            return <Item key={i} id={item.id} name={item.name} image={item.image} new_price={item.new_price} old_price={item.old_price} />
+          })
+        ) : (
+          <div style={{textAlign: 'center', width: '100%', padding: '50px'}}>
+            No products found in this category.
+          </div>
+        )}
       </div>
       <div className="shopcategory-loadmore">
         Explore More

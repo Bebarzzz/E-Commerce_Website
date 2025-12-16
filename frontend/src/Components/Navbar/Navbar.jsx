@@ -1,14 +1,22 @@
 import React, { useContext, useState } from 'react'
 import './Navbar.css'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ShopContext } from '../../Context/ShopContext';
+import { isAuthenticated, logoutUser } from '../../services/userService';
 
 import logo from '../Assets/logo.png'
 import cart_icon from '../Assets/cart_icon.png'
+
 export const Navbar = () => {
 
   const [menu, setMenu] = useState("Home");
   const { getTotalCartItems } = useContext(ShopContext);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logoutUser();
+    navigate('/login');
+  };
 
   return (
     <div className='navbar'>
@@ -26,7 +34,11 @@ export const Navbar = () => {
         <li onClick={() => setMenu("Contact Us")}><Link style={{ textDecoration: 'none' }} to='/contact'>Contact Us</Link>{menu === "Contact Us" && <hr />}</li>
       </ul>
       <div className="nav-login-cart">
-        <Link to='/login'><button>Login</button></Link>
+        {isAuthenticated() ? (
+          <button onClick={handleLogout}>Logout</button>
+        ) : (
+          <Link to='/login'><button>Login</button></Link>
+        )}
         <div className="nav-cart-container">
           <Link to='/cart'><img src={cart_icon} alt="" /></Link>
           <div className="nav-cart-count">{getTotalCartItems()}</div>

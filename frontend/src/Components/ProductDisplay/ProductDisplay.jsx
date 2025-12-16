@@ -23,7 +23,9 @@ const ProductDisplay = (props) => {
       <div className="productdisplay-right">
         <h1>{product.name}</h1>
         <div className="productdisplay-right-prices">
-            <div className="productdisplay-right-price-old">${product.old_price}</div>
+            {product.old_price && product.old_price !== product.new_price && (
+              <div className="productdisplay-right-price-old">${product.old_price}</div>
+            )}
             <div className="productdisplay-right-price-new">${product.new_price}</div>
         </div>
         <div className="productdisplay-right-description">
@@ -32,8 +34,10 @@ const ProductDisplay = (props) => {
         <div className="productdisplay-right-actions">
           <button onClick={()=>{addToCart(product.id)}}>ADD TO CART</button>
         </div>
-        <p className='productdisplay-right-category'><span>Category :</span> {product.category}, Automotive</p>
-        <p className='productdisplay-right-category'><span>Tags :</span> Modern, Reliable</p>
+        <p className='productdisplay-right-category'><span>Category :</span> {product.category}</p>
+        {product.type && <p className='productdisplay-right-category'><span>Type :</span> {product.type}</p>}
+        {product.engineType && <p className='productdisplay-right-category'><span>Engine :</span> {product.engineType}</p>}
+        {product.transmissionType && <p className='productdisplay-right-category'><span>Transmission :</span> {product.transmissionType}</p>}
       </div>
     </div>
   )

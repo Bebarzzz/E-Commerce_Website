@@ -1,33 +1,72 @@
-import React, { createContext, useState } from "react";
-import all_product from "../Components/Assets/all_product";
+import React, { createContext, useState, useEffect } from "react";
+import { getAllCars } from "../services/carService";
 
 export const ShopContext = createContext(null);
 
-const getDefaultCart = () => {
-  let cart = {};
-  for (let index = 0; index < all_product.length + 1; index++) {
-    cart[index] = 0;
-  }
-  return cart;
-};
-
 const ShopContextProvider = (props) => {
-  const [cartItems, setCartItems] = useState(getDefaultCart());
+  const [allProducts, setAllProducts] = useState([]);
+  const [cartItems, setCartItems] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch cars from backend on component mount
+  useEffect(() => {
+    const fetchCars = async () => {
+      try {
+        setLoading(true);
+        const cars = await getAllCars();
+        
+        // Transform backend car data to match frontend structure
+        const transformedCars = cars.map((car) => ({
+          id: car._id,
+          name: `${car.manufactureYear} ${car.brand} ${car.model}`,
+          category: car.condition,
+          image: car.images && car.images.length > 0 ? car.images[0] : null,
+          new_price: car.price,
+          // Keep all original backend fields
+          ...car
+        }));
+        
+        setAllProducts(transformedCars);
+        setError(null);
+      } catch (err) {
+        console.error("Failed to fetch cars:", err);
+        setError(err.message);
+        // Fallback to empty array on error
+        setAllProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCars();
+  }, []);
 
   const addToCart = (itemId) => {
-    setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] + 1 }));
+    setCartItems((prev) => ({ 
+      ...prev, 
+      [itemId]: (prev[itemId] || 0) + 1 
+    }));
   };
 
   const removeFromCart = (itemId) => {
-    setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] - 1 }));
+    setCartItems((prev) => {
+      const newCart = { ...prev };
+      if (newCart[itemId] > 0) {
+        newCart[itemId] -= 1;
+      }
+      return newCart;
+    });
   };
 
   const getTotalCartAmount = () => {
     let totalAmount = 0;
     for (const item in cartItems) {
       if (cartItems[item] > 0) {
-        let itemInfo = all_product.find((product) => product.id === Number(item));
-        totalAmount += itemInfo.new_price * cartItems[item];
+        const itemInfo = allProducts.find((product) => product.id === item);
+        if (itemInfo) {
+          totalAmount += itemInfo.new_price * cartItems[item];
+        }
       }
     }
     return totalAmount;
@@ -43,7 +82,39 @@ const ShopContextProvider = (props) => {
     return totalItem;
   };
 
-  const contextValue = { all_product, cartItems, addToCart, removeFromCart, getTotalCartItems, getTotalCartAmount };
+  const refreshProducts = async () => {
+    try {
+      setLoading(true);
+      const cars = await getAllCars();
+      const transformedCars = cars.map((car) => ({
+        id: car._id,
+        name: `${car.manufactureYear} ${car.brand} ${car.model}`,
+        category: car.condition,
+        image: car.images && car.images.length > 0 ? car.images[0] : null,
+        new_price: car.price,
+        ...car
+      }));
+      setAllProducts(transformedCars);
+      setError(null);
+    } catch (err) {
+      console.error("Failed to refresh cars:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const contextValue = { 
+    all_product: allProducts,
+    cartItems, 
+    addToCart, 
+    removeFromCart, 
+    getTotalCartItems, 
+    getTotalCartAmount,
+    loading,
+    error,
+    refreshProducts
+  };
 
   return (
     <ShopContext.Provider value={contextValue}>

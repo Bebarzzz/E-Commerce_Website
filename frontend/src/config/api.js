@@ -7,12 +7,14 @@ export const API_ENDPOINTS = {
   SIGNUP: `${API_BASE_URL}/api/user/signup`,
   
   // Car endpoints
-  ADD_CAR: `${API_BASE_URL}/api/car/add`,
-  REMOVE_CAR: `${API_BASE_URL}/api/car/remove`,
-  GET_CARS: `${API_BASE_URL}/api/car/all`,
+  ADD_CAR: `${API_BASE_URL}/api/car`,
+  REMOVE_CAR: `${API_BASE_URL}/api/car`,
+  EDIT_CAR: `${API_BASE_URL}/api/car`,
+  GET_CARS: `${API_BASE_URL}/api/car`,
   
   // Order endpoints
   GET_ORDERS: `${API_BASE_URL}/api/order/showallorders`,
+  CREATE_ORDER: `${API_BASE_URL}/api/order`,
   
   // Health check
   HEALTH: `${API_BASE_URL}/api/health`,
@@ -21,7 +23,7 @@ export const API_ENDPOINTS = {
 // Helper function for API calls
 export const apiRequest = async (url, options = {}) => {
   try {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('auth-token');
     
     const headers = {
       'Content-Type': 'application/json',

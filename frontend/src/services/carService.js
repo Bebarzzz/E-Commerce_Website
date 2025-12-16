@@ -10,9 +10,18 @@ import { API_ENDPOINTS, apiRequest } from '../config/api';
  */
 export const getAllCars = async () => {
   try {
-    const cars = await apiRequest(API_ENDPOINTS.GET_CARS, {
+    const response = await fetch(API_ENDPOINTS.GET_CARS, {
       method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const cars = await response.json();
     return cars;
   } catch (error) {
     console.error('Error fetching cars:', error);

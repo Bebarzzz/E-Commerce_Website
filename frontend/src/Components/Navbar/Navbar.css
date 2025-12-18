@@ -78,8 +78,13 @@
 }
 
 @keyframes slideIn {
-  from { width: 0; }
-  to { width: 100%; }
+  from {
+    width: 0;
+  }
+
+  to {
+    width: 100%;
+  }
 }
 
 .nav-login-cart {
@@ -139,13 +144,19 @@
   position: absolute;
   top: -8px;
   right: -8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Base style */
+.nav-dropdown {
+  display: none;
 }
 
 @media(max-width: 1280px) {
   .navbar {
     padding: 16px 50px;
   }
+
   .nav-logo p {
     font-size: 25px;
   }
@@ -155,10 +166,12 @@
   .navbar {
     padding: 16px 30px;
   }
+
   .nav-menu {
     gap: 25px;
     font-size: 16px;
   }
+
   .nav-login-cart button {
     width: 100px;
     height: 40px;
@@ -167,7 +180,65 @@
 }
 
 @media(max-width: 800px) {
+  .navbar {
+    padding: 10px 0;
+    justify-content: space-around;
+  }
+
   .nav-logo p {
+    font-size: 20px;
+  }
+
+  .nav-login-cart {
+    gap: 15px;
+  }
+
+  .nav-login-cart button {
+    width: 80px;
+    height: 35px;
+    font-size: 14px;
+  }
+
+  .nav-dropdown {
+    display: block;
+    width: 30px;
+    cursor: pointer;
+    transform: rotate(-90deg);
+    transition: 0.5s;
+    margin-right: 10px;
+  }
+
+  .nav-dropdown.open {
+    transform: rotate(0deg);
+  }
+
+  .nav-menu {
     display: none;
+    height: 380px;
+    width: 100%;
+    position: absolute;
+    top: 75px;
+    left: 0;
+    background: white;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+  }
+
+  .nav-menu-visible {
+    display: flex;
+    animation: slideFwd 0.5s ease-out;
+  }
+}
+
+@keyframes slideFwd {
+  0% {
+    transform: translateX(100%);
+  }
+
+  100% {
+    transform: translateX(0);
   }
 }

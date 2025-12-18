@@ -23,6 +23,7 @@
     opacity: 0;
     transform: translateY(50px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -126,7 +127,7 @@
   .loginsignup-container {
     padding: 30px;
   }
-  
+
   .loginsignup-container h1 {
     font-size: 28px;
   }
@@ -135,13 +136,46 @@
     height: 55px;
     font-size: 16px;
   }
-  
+
   .loginsignup-btn {
     height: 55px;
     font-size: 18px;
   }
-  
+
   .loginsignup-agree {
+    font-size: 14px;
+  }
+}
+
+@media(max-width: 480px) {
+  .loginsignup-container {
+    padding: 25px 20px;
+    width: 100%;
+    border-radius: 0;
+    box-shadow: none;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .loginsignup-container h1 {
+    font-size: 24px;
+  }
+
+  .loginsignup-fields input {
+    height: 50px;
+    font-size: 14px;
+    padding-left: 15px;
+  }
+
+  .loginsignup-btn {
+    height: 50px;
+    font-size: 16px;
+    margin-top: 20px;
+  }
+
+  .loginsignup-login {
     font-size: 14px;
   }
 }

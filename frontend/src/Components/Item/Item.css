@@ -1,5 +1,6 @@
 .item {
-  width: 350px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .item p {
@@ -30,5 +31,5 @@
 }
 
 .item img {
-    width: 100%;
+  width: 100%;
 }

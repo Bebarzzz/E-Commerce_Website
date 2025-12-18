@@ -16,11 +16,11 @@ export const getAllCars = async () => {
         'Content-Type': 'application/json',
       },
     });
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     const cars = await response.json();
     return cars;
   } catch (error) {
@@ -37,7 +37,7 @@ export const getAllCars = async () => {
 export const addCar = async (carData) => {
   try {
     const token = localStorage.getItem('auth-token');
-    
+
     const response = await fetch(API_ENDPOINTS.ADD_CAR, {
       method: 'POST',
       headers: {
@@ -45,13 +45,13 @@ export const addCar = async (carData) => {
       },
       body: carData, // FormData for multipart/form-data
     });
-    
+
     const data = await response.json();
-    
+
     if (!response.ok) {
       throw new Error(data.error || 'Failed to add car');
     }
-    
+
     return data;
   } catch (error) {
     console.error('Error adding car:', error);
@@ -96,7 +96,7 @@ export const filterCarsByCategory = (cars, category) => {
 export const searchCars = (cars, query) => {
   if (!query) return cars;
   const lowerQuery = query.toLowerCase();
-  return cars.filter(car => 
+  return cars.filter(car =>
     car.model?.toLowerCase().includes(lowerQuery) ||
     car.brand?.toLowerCase().includes(lowerQuery) ||
     car.type?.toLowerCase().includes(lowerQuery)
@@ -111,7 +111,7 @@ export const searchCars = (cars, query) => {
  */
 export const sortCars = (cars, sortType) => {
   const sorted = [...cars];
-  
+
   switch (sortType) {
     case 'price-low':
       return sorted.sort((a, b) => a.price - b.price);

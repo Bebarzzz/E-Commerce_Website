@@ -15,7 +15,7 @@ const ShopContextProvider = (props) => {
       try {
         setLoading(true);
         const cars = await getAllCars();
-        
+
         // Transform backend car data to match frontend structure
         const transformedCars = cars.map((car) => ({
           id: car._id,
@@ -26,7 +26,7 @@ const ShopContextProvider = (props) => {
           // Keep all original backend fields
           ...car
         }));
-        
+
         setAllProducts(transformedCars);
         setError(null);
       } catch (err) {
@@ -43,9 +43,9 @@ const ShopContextProvider = (props) => {
   }, []);
 
   const addToCart = (itemId) => {
-    setCartItems((prev) => ({ 
-      ...prev, 
-      [itemId]: (prev[itemId] || 0) + 1 
+    setCartItems((prev) => ({
+      ...prev,
+      [itemId]: (prev[itemId] || 0) + 1
     }));
   };
 
@@ -57,6 +57,10 @@ const ShopContextProvider = (props) => {
       }
       return newCart;
     });
+  };
+
+  const clearCart = () => {
+    setCartItems({});
   };
 
   const getTotalCartAmount = () => {
@@ -104,12 +108,13 @@ const ShopContextProvider = (props) => {
     }
   };
 
-  const contextValue = { 
+  const contextValue = {
     all_product: allProducts,
-    cartItems, 
-    addToCart, 
-    removeFromCart, 
-    getTotalCartItems, 
+    cartItems,
+    addToCart,
+    removeFromCart,
+    clearCart,
+    getTotalCartItems,
     getTotalCartAmount,
     loading,
     error,

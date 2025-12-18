@@ -17,7 +17,7 @@ export const loginUser = async (credentials) => {
       method: 'POST',
       body: JSON.stringify(credentials),
     });
-    
+
     // Store auth token
     if (data.token) {
       localStorage.setItem('auth-token', data.token);
@@ -25,7 +25,7 @@ export const loginUser = async (credentials) => {
         localStorage.setItem('user-email', credentials.email);
       }
     }
-    
+
     return data;
   } catch (error) {
     console.error('Login error:', error);
@@ -47,7 +47,7 @@ export const signupUser = async (userData) => {
       method: 'POST',
       body: JSON.stringify(userData),
     });
-    
+
     // Store auth token
     if (data.token) {
       localStorage.setItem('auth-token', data.token);
@@ -55,7 +55,7 @@ export const signupUser = async (userData) => {
         localStorage.setItem('user-email', userData.email);
       }
     }
-    
+
     return data;
   } catch (error) {
     console.error('Signup error:', error);

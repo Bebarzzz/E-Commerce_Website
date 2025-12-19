@@ -1,4 +1,5 @@
 const orderModel = require('../Models/orderModel');
+const jwt = require('jsonwebtoken');
 
 
 const showOrders = async (req, res) => {
@@ -20,8 +21,19 @@ const createOrder = async (req, res) => {
     try {
         const { items, totalAmount, shippingAddress } = req.body;
         
-        // Get userID from authenticated user if available
-        const userID = req.user ? req.user._id : null;
+        // Try to get userID from JWT token if available
+        let userID = null;
+        const { authorization } = req.headers;
+        
+        if (authorization) {
+            try {
+                const token = authorization.split(' ')[1];
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                userID = decoded._id;
+            } catch (error) {
+                console.log('Token verification failed, proceeding without userID:', error.message);
+            }
+        }
         
         const order = await orderModel.createOrder({
             items,

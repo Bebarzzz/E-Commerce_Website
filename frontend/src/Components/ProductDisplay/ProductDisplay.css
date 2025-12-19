@@ -28,6 +28,18 @@
   border-color: #ff4141;
 }
 
+.productdisplay-img-list img.active {
+  border-color: #ff4141;
+  border-width: 2px;
+}
+
+.productdisplay-img-placeholder {
+  height: 163px;
+  width: 150px;
+  background-color: #f5f5f5;
+  border: 1px dashed #ddd;
+}
+
 .productdisplay-main-img {
   width: 586px;
   height: 700px;

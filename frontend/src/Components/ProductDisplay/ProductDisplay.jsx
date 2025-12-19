@@ -7,19 +7,34 @@ const ProductDisplay = (props) => {
   const { product } = props;
   const { addToCart } = useContext(ShopContext);
   const { notify } = useContext(NotificationContext);
-  const [mainImage, setMainImage] = useState(product.image);
+  
+  // Get all images from product, fallback to single image if images array not available
+  const productImages = product.images && product.images.length > 0 
+    ? product.images 
+    : [product.image];
+  
+  const [mainImage, setMainImage] = useState(productImages[0]);
 
   return (
     <div className='productdisplay'>
       <div className="productdisplay-left">
         <div className="productdisplay-img-list">
-          <img src={product.image} alt="" onClick={() => setMainImage(product.image)} />
-          <img src={product.image} alt="" onClick={() => setMainImage(product.image)} />
-          <img src={product.image} alt="" onClick={() => setMainImage(product.image)} />
-          <img src={product.image} alt="" onClick={() => setMainImage(product.image)} />
+          {productImages.map((img, index) => (
+            <img 
+              key={index} 
+              src={img} 
+              alt={`${product.name} view ${index + 1}`} 
+              onClick={() => setMainImage(img)}
+              className={mainImage === img ? 'active' : ''}
+            />
+          ))}
+          {/* Fill remaining slots if less than 4 images */}
+          {productImages.length < 4 && Array(4 - productImages.length).fill(null).map((_, index) => (
+            <div key={`placeholder-${index}`} className="productdisplay-img-placeholder"></div>
+          ))}
         </div>
         <div className="productdisplay-img">
-          <img className='productdisplay-main-img' src={mainImage} alt="" />
+          <img className='productdisplay-main-img' src={mainImage} alt={product.name} />
         </div>
       </div>
       <div className="productdisplay-right">
@@ -43,6 +58,8 @@ const ProductDisplay = (props) => {
         {product.type && <p className='productdisplay-right-category'><span>Type :</span> {product.type}</p>}
         {product.engineType && <p className='productdisplay-right-category'><span>Engine :</span> {product.engineType}</p>}
         {product.transmissionType && <p className='productdisplay-right-category'><span>Transmission :</span> {product.transmissionType}</p>}
+        {product.engineCapacity && <p className='productdisplay-right-category'><span>Engine Capacity :</span> {product.engineCapacity}L</p>}
+        {product.wheelDriveType && <p className='productdisplay-right-category'><span>Drive Type :</span> {product.wheelDriveType}</p>}
       </div>
     </div>
   )

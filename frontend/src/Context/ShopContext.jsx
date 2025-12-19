@@ -1,5 +1,6 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useContext } from "react";
 import { getAllCars } from "../services/carService";
+import { NotificationContext } from "./NotificationContext";
 
 export const ShopContext = createContext(null);
 
@@ -8,6 +9,7 @@ const ShopContextProvider = (props) => {
   const [cartItems, setCartItems] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { notify } = useContext(NotificationContext);
 
   // Fetch cars from backend on component mount
   useEffect(() => {
@@ -32,15 +34,14 @@ const ShopContextProvider = (props) => {
       } catch (err) {
         console.error("Failed to fetch cars:", err);
         setError(err.message);
-        // Fallback to empty array on error
-        setAllProducts([]);
+        notify("Failed to load products from server.", "error");
       } finally {
         setLoading(false);
       }
     };
 
     fetchCars();
-  }, []);
+  }, [notify]);
 
   const addToCart = (itemId) => {
     setCartItems((prev) => ({
@@ -103,6 +104,7 @@ const ShopContextProvider = (props) => {
     } catch (err) {
       console.error("Failed to refresh cars:", err);
       setError(err.message);
+      notify("Failed to refresh products.", "error");
     } finally {
       setLoading(false);
     }

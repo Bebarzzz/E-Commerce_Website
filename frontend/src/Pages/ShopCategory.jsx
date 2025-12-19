@@ -10,15 +10,15 @@ const ShopCategory = (props) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   if (loading) {
-    return <div style={{textAlign: 'center', padding: '50px'}}>Loading products...</div>
+    return <div style={{ textAlign: 'center', padding: '50px' }}>Loading products...</div>
   }
 
   if (error) {
-    return <div style={{textAlign: 'center', padding: '50px', color: 'red'}}>Error loading products: {error}</div>
+    return <div style={{ textAlign: 'center', padding: '50px', color: 'red' }}>Error loading products: {error}</div>
   }
 
   const categoryProducts = all_product.filter(item => {
-    const isCategoryMatch = item.category === props.category;
+    const isCategoryMatch = item.category?.toLowerCase() === props.category?.toLowerCase();
     const isSearchMatch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
     return isCategoryMatch && isSearchMatch;
   });
@@ -51,7 +51,7 @@ const ShopCategory = (props) => {
             return <Item key={i} id={item.id} name={item.name} image={item.image} new_price={item.new_price} old_price={item.old_price} />
           })
         ) : (
-          <div style={{textAlign: 'center', width: '100%', padding: '50px'}}>
+          <div style={{ textAlign: 'center', width: '100%', padding: '50px' }}>
             No products found in this category.
           </div>
         )}

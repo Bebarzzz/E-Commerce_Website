@@ -1,45 +1,41 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { searchCarsAPI } from '../../services/carService';
 import './SearchBar.css';
 
 const SearchBar = ({ onSearch, useBackendSearch = false }) => {
     const [query, setQuery] = useState('');
     const [loading, setLoading] = useState(false);
+    const timeoutRef = useRef(null);
 
-    // Debounce function to delay API calls
-    const debounce = (func, delay) => {
-        let timeoutId;
-        return (...args) => {
-            clearTimeout(timeoutId);
-            timeoutId = setTimeout(() => func(...args), delay);
-        };
-    };
-
-    // Backend search function
-    const handleBackendSearch = useCallback(
-        debounce(async (searchQuery) => {
-            if (useBackendSearch) {
-                try {
-                    setLoading(true);
-                    const results = await searchCarsAPI(searchQuery);
-                    onSearch(results, true); // Pass results and flag indicating backend search
-                } catch (error) {
-                    console.error('Search error:', error);
-                    onSearch([], true);
-                } finally {
-                    setLoading(false);
-                }
+    // Backend search function with debounce
+    const handleBackendSearch = useCallback(async (searchQuery) => {
+        if (useBackendSearch) {
+            try {
+                setLoading(true);
+                const results = await searchCarsAPI(searchQuery);
+                onSearch(results, true); // Pass results and flag indicating backend search
+            } catch (error) {
+                console.error('Search error:', error);
+                onSearch([], true);
+            } finally {
+                setLoading(false);
             }
-        }, 500),
-        [useBackendSearch, onSearch]
-    );
+        }
+    }, [useBackendSearch, onSearch]);
 
     const handleChange = (e) => {
         const value = e.target.value;
         setQuery(value);
         
         if (useBackendSearch) {
-            handleBackendSearch(value);
+            // Clear existing timeout
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+            // Set new timeout for debounce
+            timeoutRef.current = setTimeout(() => {
+                handleBackendSearch(value);
+            }, 500);
         } else {
             // Client-side search - pass query string
             onSearch(value);

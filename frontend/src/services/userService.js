@@ -18,11 +18,19 @@ export const loginUser = async (credentials) => {
       body: JSON.stringify(credentials),
     });
 
-    // Store auth token
+    // Store auth token and user data
     if (data.token) {
       localStorage.setItem('auth-token', data.token);
       if (credentials.email) {
         localStorage.setItem('user-email', credentials.email);
+      }
+      // Store user role if available
+      if (data.role) {
+        localStorage.setItem('user-role', data.role);
+      }
+      // Store user ID if available
+      if (data.userId) {
+        localStorage.setItem('user-id', data.userId);
       }
     }
 
@@ -48,11 +56,19 @@ export const signupUser = async (userData) => {
       body: JSON.stringify(userData),
     });
 
-    // Store auth token
+    // Store auth token and user data
     if (data.token) {
       localStorage.setItem('auth-token', data.token);
       if (userData.email) {
         localStorage.setItem('user-email', userData.email);
+      }
+      // Store user role if available
+      if (data.role) {
+        localStorage.setItem('user-role', data.role);
+      }
+      // Store user ID if available
+      if (data.userId) {
+        localStorage.setItem('user-id', data.userId);
       }
     }
 
@@ -69,6 +85,8 @@ export const signupUser = async (userData) => {
 export const logoutUser = () => {
   localStorage.removeItem('auth-token');
   localStorage.removeItem('user-email');
+  localStorage.removeItem('user-role');
+  localStorage.removeItem('user-id');
 };
 
 /**
@@ -78,6 +96,31 @@ export const logoutUser = () => {
 export const isAuthenticated = () => {
   const token = localStorage.getItem('auth-token');
   return !!token;
+};
+
+/**
+ * Check if current user is admin
+ * @returns {boolean} True if user has admin role
+ */
+export const isAdmin = () => {
+  const role = localStorage.getItem('user-role');
+  return role === 'admin';
+};
+
+/**
+ * Get current user role
+ * @returns {string|null} User role ('customer' or 'admin') or null
+ */
+export const getUserRole = () => {
+  return localStorage.getItem('user-role');
+};
+
+/**
+ * Get current user ID
+ * @returns {string|null} User ID or null
+ */
+export const getUserId = () => {
+  return localStorage.getItem('user-id');
 };
 
 /**

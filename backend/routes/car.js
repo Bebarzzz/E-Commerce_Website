@@ -6,17 +6,18 @@ const {
     removeCar,
     editCar,
     getAllCars,
-    searchCars
+    searchCars,
+    getSingleCar
 } = require('../controllers/carController')
 
 const router = express.Router()
 
 router.get('/', getAllCars)
 router.get('/search', searchCars)
+router.get('/:id', getSingleCar)
 
 // Allow up to 5 images per car
 router.post('/', requireAuth, requireAdmin, upload.array('images', 5), addCar)
 router.patch('/:id', requireAuth, requireAdmin, upload.array('images', 5), editCar)
 router.delete('/:id', requireAuth, requireAdmin, removeCar)
-router.get('/:search',searchCars)
 module.exports = router

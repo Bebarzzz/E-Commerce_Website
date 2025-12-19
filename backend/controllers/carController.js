@@ -1,5 +1,5 @@
 const Car = require('../Models/carModel')
-
+const mongoose = require('mongoose')
 
 const removeCar = async (req, res) => {
     const { id } = req.params;
@@ -12,6 +12,27 @@ const removeCar = async (req, res) => {
         } else {
             res.status(404).json({ error: result.message });
         }
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+}
+
+const getSingleCar = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        // Validate MongoDB ObjectId
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ error: 'Invalid car ID format.' });
+        }
+
+        const car = await Car.findById(id);
+
+        if (!car) {
+            return res.status(404).json({ error: 'Car not found.' });
+        }
+
+        res.status(200).json(car);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -116,4 +137,5 @@ module.exports = {
     editCar,
     getAllCars,
     searchCars,
+    getSingleCar
 };

@@ -56,10 +56,10 @@ export const formatCartForOrder = (cartItems, products) => {
       if (product) {
         items.push({
           carId: product._id || product.id,
-          quantity: cartItems[itemId],
+          name: product.name || `${product.brand} ${product.model}`,
           price: product.price || product.new_price,
-          model: product.model || product.name,
-          brand: product.brand,
+          quantity: cartItems[itemId],
+          image: product.image || (product.images && product.images[0]) || ''
         });
       }
     }

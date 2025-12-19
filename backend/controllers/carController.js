@@ -1,5 +1,5 @@
 const Car = require('../Models/carModel')
-
+const mongoose = require('mongoose')
 
 const removeCar = async (req, res) => {
     const { id } = req.params;
@@ -12,6 +12,27 @@ const removeCar = async (req, res) => {
         } else {
             res.status(404).json({ error: result.message });
         }
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+}
+
+const getSingleCar = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        // Validate MongoDB ObjectId
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ error: 'Invalid car ID format.' });
+        }
+
+        const car = await Car.findById(id);
+
+        if (!car) {
+            return res.status(404).json({ error: 'Car not found.' });
+        }
+
+        res.status(200).json(car);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -78,9 +99,43 @@ const getAllCars = async (req, res) => {
     }
 }
 
+const searchCars = async (req, res) => {
+    const { query } = req.query;
+
+    try {
+        // If no query provided, return 3 most recent cars
+        if (!query || query.trim() === '') {
+            const cars = await Car.find({}).sort({ createdAt: -1 }).limit(3);
+            return res.status(200).json(cars);
+        }
+
+        // Create a case-insensitive regex pattern for matching
+        const searchPattern = new RegExp(query, 'i');
+
+        // Search across multiple fields
+        const cars = await Car.find({
+            $or: [
+                { model: searchPattern },
+                { brand: searchPattern },
+                { type: searchPattern },
+                { engineType: searchPattern },
+                { transmissionType: searchPattern },
+                { wheelDriveType: searchPattern },
+                { condition: searchPattern }
+            ]
+        }).sort({ createdAt: -1 }).limit(3);
+
+        res.status(200).json(cars);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+}
+
 module.exports = {
     addCar,
     removeCar,
     editCar,
     getAllCars,
+    searchCars,
+    getSingleCar
 };

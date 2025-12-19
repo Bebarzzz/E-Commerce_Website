@@ -30,7 +30,7 @@ export const Navbar = () => {
       <div className='nav-logo'>
         <Link to='/' style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '10px' }} onClick={() => setMenu("Home")}>
           <img src={logo} alt='' />
-          <p>Automotive</p>
+          <p>RevNRun</p>
         </Link>
       </div>
       <ul ref={menuRef} className="nav-menu">

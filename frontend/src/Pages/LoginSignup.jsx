@@ -1,11 +1,14 @@
 import React, { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { useContext } from 'react';
 import './CSS/LoginSignup.css'
 import { loginUser, signupUser } from '../services/userService'
+import { NotificationContext } from '../Context/NotificationContext';
 
 const LoginSignup = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { notify } = useContext(NotificationContext);
   const from = location.state?.from || "/";
 
   const [state, setState] = useState("Login");
@@ -35,10 +38,12 @@ const LoginSignup = () => {
       });
 
       if (responseData.token) {
+        notify('Login successful!', 'success');
         navigate(from, { replace: true });
       }
     } catch (err) {
       setError(err.message || "Login failed. Please try again.");
+      notify(err.message || "Login failed. Please try again.", 'error');
       console.error("Login error:", err);
     } finally {
       setLoading(false);
@@ -59,10 +64,12 @@ const LoginSignup = () => {
       });
 
       if (responseData.token) {
+        notify('Signup successful!', 'success');
         navigate(from, { replace: true });
       }
     } catch (err) {
       setError(err.message || "Signup failed. Please try again.");
+      notify(err.message || "Signup failed. Please try again.", 'error');
       console.error("Signup error:", err);
     } finally {
       setLoading(false);

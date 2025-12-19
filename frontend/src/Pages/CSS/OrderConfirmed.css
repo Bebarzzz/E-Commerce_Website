@@ -1,0 +1,134 @@
+.order-confirmed {
+    width: 100%;
+    min-height: 80vh;
+    padding: 100px 0;
+    background: #fce3fe;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.order-confirmed-container {
+    background: white;
+    padding: 60px;
+    border-radius: 20px;
+    max-width: 800px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.success-icon {
+    width: 80px;
+    height: 80px;
+    background: #e8f5e9;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 30px;
+}
+
+.success-icon svg {
+    width: 50px;
+    height: 50px;
+    stroke: #4caf50;
+}
+
+.order-confirmed h1 {
+    color: #333;
+    font-size: 36px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.order-message {
+    color: #666;
+    font-size: 18px;
+    margin-bottom: 40px;
+}
+
+.order-details {
+    background: #f9f9f9;
+    padding: 30px;
+    border-radius: 10px;
+    margin-bottom: 40px;
+    text-align: left;
+}
+
+.order-details h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.order-info {
+    margin-bottom: 30px;
+    color: #555;
+    line-height: 1.6;
+}
+
+.order-items {
+    margin-bottom: 30px;
+}
+
+.order-items h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    color: #555;
+}
+
+.order-item:last-child {
+    border-bottom: none;
+}
+
+.order-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+    border-top: 2px solid #eee;
+    margin-top: 20px;
+}
+
+.order-total h3 {
+    font-size: 20px;
+    color: #333;
+}
+
+.continue-shopping-btn {
+    width: 260px;
+    height: 58px;
+    background: #ff4141;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 75px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.continue-shopping-btn:hover {
+    transform: scale(1.05);
+    background: #ff2b2b;
+}
+
+@media (max-width: 600px) {
+    .order-confirmed-container {
+        padding: 30px;
+    }
+
+    .order-confirmed h1 {
+        font-size: 28px;
+    }
+}

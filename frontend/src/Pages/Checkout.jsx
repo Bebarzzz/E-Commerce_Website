@@ -2,10 +2,12 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CSS/Checkout.css';
 import { ShopContext } from '../Context/ShopContext';
+import { NotificationContext } from '../Context/NotificationContext';
 import { createOrder, formatCartForOrder } from '../services/orderService';
 
 const Checkout = () => {
   const { getTotalCartAmount, all_product, cartItems, clearCart } = useContext(ShopContext);
+  const { notify } = useContext(NotificationContext);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -41,6 +43,7 @@ const Checkout = () => {
       const requiredFields = ['firstName', 'lastName', 'email', 'street', 'city', 'state', 'zipCode', 'country', 'phone'];
       for (const field of requiredFields) {
         if (!formData[field]) {
+          notify('Please fill in all required fields', 'warning');
           throw new Error('Please fill in all fields');
         }
       }
@@ -59,11 +62,21 @@ const Checkout = () => {
       await createOrder(orderData);
 
       clearCart();
-      alert('Order placed successfully!');
-      navigate('/');
+      notify('Order placed successfully!', 'success');
+      navigate('/order-confirmed', {
+        state: {
+          order: {
+            items: orderItems,
+            totalAmount: getTotalCartAmount(),
+            shippingAddress: formData
+          }
+        },
+        replace: true
+      });
 
     } catch (err) {
       setError(err.message || 'Failed to place order');
+      notify(err.message || 'Failed to place order', 'error');
       console.error('Order error:', err);
     } finally {
       setLoading(false);

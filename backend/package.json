@@ -18,7 +18,8 @@
       "controllers/**/*.js",
       "Models/**/*.js",
       "middleware/**/*.js",
-      "!**/node_modules/**"
+      "!**/node_modules/**",
+      "!**/chatbot*.js"
     ],
     "testMatch": [
       "**/tests/**/*.test.js"

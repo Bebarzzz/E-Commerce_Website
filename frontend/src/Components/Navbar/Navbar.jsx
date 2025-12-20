@@ -26,7 +26,7 @@ export const Navbar = () => {
   };
 
   return (
-    <div className='navbar'>
+    <nav className='navbar'>
       <div className='nav-logo'>
         <Link to='/' style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '10px' }} onClick={() => setMenu("Home")}>
           <img src={logo} alt='' />
@@ -52,7 +52,7 @@ export const Navbar = () => {
         </div>
       </div>
       <img className='nav-dropdown' onClick={dropdown_toggle} src={nav_dropdown} alt="" />
-    </div>
+    </nav>
   )
 }
 

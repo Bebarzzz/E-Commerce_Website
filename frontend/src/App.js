@@ -1,4 +1,5 @@
 import './App.css';
+import Chatbot from './Components/Chatbot';
 import Navbar from './Components/Navbar/Navbar';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { NotificationProvider } from './Context/NotificationContext';
@@ -10,7 +11,6 @@ import LoginSignup from './Pages/LoginSignup';
 import Checkout from './Pages/Checkout';
 import OrderConfirmed from './Pages/OrderConfirmed';
 import Contact from './Pages/Contact';
-
 function App() {
 
   return (
@@ -31,6 +31,7 @@ function App() {
             <Route path='/order-confirmed' element={<OrderConfirmed />} />
             <Route path='/login' element={<LoginSignup />} />
             <Route path='/contact' element={<Contact />} />
+            <Route path='/chatbot' element={<Chatbot />} />
           </Routes>
         </BrowserRouter>
       </NotificationProvider>

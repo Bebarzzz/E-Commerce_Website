@@ -8,6 +8,7 @@ const path = require("path")
 require('dotenv').config()
 
 //import files 
+const chatbotRoutes = require('./routes/chatbot')
 const userRoutes = require('./routes/user')
 const carRoutes = require('./routes/car')
 const orderRoutes = require('./routes/order')
@@ -56,6 +57,7 @@ app.get('/api/health', (req, res) => {
 })
 
 // routes
+app.use('/api/chatbot', chatbotRoutes)
 app.use('/api/user', userRoutes)
 app.use('/api/car', carRoutes)
 app.use('/api/order', orderRoutes)

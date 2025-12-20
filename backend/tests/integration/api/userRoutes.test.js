@@ -18,14 +18,14 @@ describe('User API Integration Tests', () => {
           username: 'newuser',
           email: 'newuser@example.com',
           password: 'Password123!',
-          role: 'user'
+          role: 'customer'
         });
       
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('token');
       expect(response.body.username).toBe('newuser');
       expect(response.body.email).toBe('newuser@example.com');
-      expect(response.body.role).toBe('user');
+      expect(response.body.role).toBe('customer');
     });
 
     test('should create admin user', async () => {
@@ -151,7 +151,7 @@ describe('User API Integration Tests', () => {
           username: 'loginuser',
           email: 'login@example.com',
           password: 'Password123!',
-          role: 'user'
+          role: 'customer'
         });
     });
 
@@ -177,7 +177,7 @@ describe('User API Integration Tests', () => {
           password: 'Password123!'
         });
       
-      expect(response.body.role).toBe('user');
+      expect(response.body.role).toBe('customer');
     });
 
     test('should return 400 for missing email', async () => {
@@ -271,3 +271,4 @@ describe('User API Integration Tests', () => {
     });
   });
 });
+

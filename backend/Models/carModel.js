@@ -63,7 +63,7 @@ const carSchema = new Schema({
 carSchema.statics.addNewCar = async function(model, manufactureYear, brand, type, price, engineCapacity, wheelDriveType, engineType, transmissionType, condition, images = []) {
 
 
-    if (!model || !brand || !type || !price || !manufactureYear || !engineCapacity || !wheelDriveType || !engineType || !transmissionType || !condition) {
+    if (!model || !brand || !type || price === undefined || price === null || !manufactureYear || engineCapacity === undefined || engineCapacity === null || !wheelDriveType || !engineType || !transmissionType || !condition) {
         throw new Error('All fields (model, manufactureYear, brand, type, price, engineCapacity, wheelDriveType, engineType, transmissionType, condition) are required.')
     }
 

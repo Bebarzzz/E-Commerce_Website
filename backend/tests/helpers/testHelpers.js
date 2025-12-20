@@ -10,7 +10,7 @@ const createTestUser = async (userData = {}) => {
     username: 'testuser',
     email: 'test@example.com',
     password: 'Password123!',
-    role: 'user'
+    role: 'customer'
   };
 
   const user = await User.signup(

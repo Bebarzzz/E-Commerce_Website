@@ -25,7 +25,7 @@ jobs:
       
       - name: Install dependencies
         working-directory: ./backend
-        run: npm ci
+        run: npm install
       
       - name: Quick smoke test (critical models only)
         working-directory: ./backend

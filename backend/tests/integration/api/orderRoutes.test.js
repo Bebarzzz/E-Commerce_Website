@@ -26,6 +26,8 @@ describe('Order API Integration Tests', () => {
       items: [
         {
           carId: new mongoose.Types.ObjectId().toString(),
+          name: 'Test Car',
+          image: 'https://example.com/car.jpg',
           quantity: 1,
           price: 30000
         }
@@ -81,11 +83,15 @@ describe('Order API Integration Tests', () => {
         items: [
           {
             carId: new mongoose.Types.ObjectId().toString(),
+            name: 'Test Car',
+            image: 'https://example.com/car.jpg',
             quantity: 1,
             price: 30000
           },
           {
             carId: new mongoose.Types.ObjectId().toString(),
+            name: 'Test Car',
+            image: 'https://example.com/car.jpg',
             quantity: 1,
             price: 25000
           }
@@ -182,6 +188,8 @@ describe('Order API Integration Tests', () => {
         items: [
           {
             carId: new mongoose.Types.ObjectId().toString(),
+            name: 'Test Car',
+            image: 'https://example.com/car.jpg',
             quantity: 1,
             price: 30000
           }
@@ -204,6 +212,8 @@ describe('Order API Integration Tests', () => {
         items: [
           {
             carId: new mongoose.Types.ObjectId().toString(),
+            name: 'Test Car',
+            image: 'https://example.com/car.jpg',
             quantity: 1,
             price: 25000
           }
@@ -246,7 +256,7 @@ describe('Order API Integration Tests', () => {
       expect(order).toHaveProperty('items');
       expect(order).toHaveProperty('totalAmount');
       expect(order).toHaveProperty('shippingAddress');
-      expect(order).toHaveProperty('status');
+      expect(order).toHaveProperty('orderStatus');
       expect(order).toHaveProperty('createdAt');
     });
 
@@ -285,6 +295,8 @@ describe('Order API Integration Tests', () => {
         items: [
           {
             carId: new mongoose.Types.ObjectId().toString(),
+            name: 'Test Car',
+            image: 'https://example.com/car.jpg',
             quantity: 1,
             price: 30000
           }
@@ -326,7 +338,7 @@ describe('Order API Integration Tests', () => {
 
     test('should create multiple orders for same user', async () => {
       const orderData1 = {
-        items: [{ carId: new mongoose.Types.ObjectId().toString(), quantity: 1, price: 30000 }],
+        items: [{ carId: new mongoose.Types.ObjectId().toString(), name: 'Test Car', image: 'https://example.com/car.jpg', quantity: 1, price: 30000 }],
         totalAmount: 30000,
         shippingAddress: {
           firstName: 'First',
@@ -342,7 +354,7 @@ describe('Order API Integration Tests', () => {
       };
 
       const orderData2 = {
-        items: [{ carId: new mongoose.Types.ObjectId().toString(), quantity: 1, price: 25000 }],
+        items: [{ carId: new mongoose.Types.ObjectId().toString(), name: 'Test Car', image: 'https://example.com/car.jpg', quantity: 1, price: 25000 }],
         totalAmount: 25000,
         shippingAddress: {
           firstName: 'Second',
@@ -373,3 +385,5 @@ describe('Order API Integration Tests', () => {
     });
   });
 });
+
+

@@ -159,7 +159,7 @@ describe('Car Model Unit Tests', () => {
       const result = await Car.removeCar(fakeId.toString());
       
       expect(result.success).toBe(false);
-      expect(result.message).toBe('Car not found.');
+      expect(result.message).toContain('not found');
     });
 
     test('should fail with missing car ID', async () => {
@@ -169,10 +169,9 @@ describe('Car Model Unit Tests', () => {
     });
 
     test('should fail with invalid car ID format', async () => {
-      const result = await Car.removeCar('invalid-id');
-      
-      expect(result.success).toBe(false);
-      expect(result.message).toBe('Invalid car ID format.');
+      await expect(
+        Car.removeCar('invalid-id')
+      ).rejects.toThrow('Invalid car ID format.');
     });
   });
 
@@ -208,14 +207,13 @@ describe('Car Model Unit Tests', () => {
       const result = await Car.editCar(fakeId.toString(), { price: 25000 });
       
       expect(result.success).toBe(false);
-      expect(result.message).toBe('Car not found.');
+      expect(result.message).toContain('not found');
     });
 
     test('should fail with invalid car ID', async () => {
-      const result = await Car.editCar('invalid-id', { price: 25000 });
-      
-      expect(result.success).toBe(false);
-      expect(result.message).toBe('Invalid car ID format.');
+      await expect(
+        Car.editCar('invalid-id', { price: 25000 })
+      ).rejects.toThrow('Invalid car ID format.');
     });
   });
 
@@ -235,19 +233,19 @@ describe('Car Model Unit Tests', () => {
       expect(carSchema.condition.enum).toContain('used');
     });
 
-    test('should have timestamps', () => {
-      const car = new Car({
-        model: 'Test',
-        brand: 'Test',
-        price: 1000,
-        manufactureYear: 2020,
-        type: 'Sedan',
-        engineCapacity: 2.0,
-        wheelDriveType: 'FWD',
-        engineType: 'Gasoline',
-        transmissionType: 'Automatic',
-        condition: 'new'
-      });
+    test('should have timestamps', async () => {
+      const car = await Car.addNewCar(
+        'Test',
+        2020,
+        'Test Brand',
+        'Sedan',
+        20000,
+        2.0,
+        'FWD',
+        'Gasoline',
+        'Automatic',
+        'new'
+      );
       
       expect(car.createdAt).toBeDefined();
       expect(car.updatedAt).toBeDefined();

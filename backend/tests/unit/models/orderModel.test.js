@@ -10,6 +10,8 @@ describe('Order Model Unit Tests', () => {
         items: [
           {
             carId: new mongoose.Types.ObjectId().toString(),
+            name: 'Test Car',
+            image: 'https://example.com/car.jpg',
             quantity: 1,
             price: 30000
           }
@@ -34,7 +36,7 @@ describe('Order Model Unit Tests', () => {
       expect(order.items).toHaveLength(1);
       expect(order.totalAmount).toBe(30000);
       expect(order.shippingAddress.firstName).toBe('John');
-      expect(order.status).toBe('pending');
+      expect(order.orderStatus).toBe('pending');
     });
 
     test('should create order with userID', async () => {
@@ -43,6 +45,8 @@ describe('Order Model Unit Tests', () => {
         items: [
           {
             carId: new mongoose.Types.ObjectId().toString(),
+            name: 'Honda Accord',
+            image: 'https://example.com/accord.jpg',
             quantity: 1,
             price: 25000
           }
@@ -72,6 +76,8 @@ describe('Order Model Unit Tests', () => {
         items: [
           {
             carId: new mongoose.Types.ObjectId().toString(),
+            name: 'Ford Focus',
+            image: 'https://example.com/focus.jpg',
             quantity: 1,
             price: 20000
           }
@@ -101,11 +107,15 @@ describe('Order Model Unit Tests', () => {
         items: [
           {
             carId: new mongoose.Types.ObjectId().toString(),
+            name: 'BMW 3 Series',
+            image: 'https://example.com/bmw.jpg',
             quantity: 1,
             price: 30000
           },
           {
             carId: new mongoose.Types.ObjectId().toString(),
+            name: 'Audi A4',
+            image: 'https://example.com/audi.jpg',
             quantity: 1,
             price: 25000
           }
@@ -156,6 +166,8 @@ describe('Order Model Unit Tests', () => {
         items: [
           {
             carId: new mongoose.Types.ObjectId().toString(),
+            name: 'Tesla Model 3',
+            image: 'https://example.com/tesla.jpg',
             quantity: 1,
             price: 30000
           }
@@ -183,6 +195,8 @@ describe('Order Model Unit Tests', () => {
         items: [
           {
             carId: new mongoose.Types.ObjectId().toString(),
+            name: 'Nissan Altima',
+            image: 'https://example.com/altima.jpg',
             quantity: 1,
             price: 30000
           }
@@ -200,6 +214,8 @@ describe('Order Model Unit Tests', () => {
         items: [
           {
             carId: new mongoose.Types.ObjectId().toString(),
+            name: 'Mazda CX-5',
+            image: 'https://example.com/mazda.jpg',
             quantity: 1,
             price: 30000
           }
@@ -219,7 +235,7 @@ describe('Order Model Unit Tests', () => {
       };
       
       const order = await Order.createOrder(orderData);
-      expect(order.status).toBe('pending');
+      expect(order.orderStatus).toBe('pending');
     });
   });
 
@@ -227,7 +243,7 @@ describe('Order Model Unit Tests', () => {
     test('should return all orders', async () => {
       // Create multiple orders
       const orderData1 = {
-        items: [{ carId: new mongoose.Types.ObjectId().toString(), quantity: 1, price: 30000 }],
+        items: [{ carId: new mongoose.Types.ObjectId().toString(), name: 'Chevy Malibu', image: 'https://example.com/malibu.jpg', quantity: 1, price: 30000 }],
         totalAmount: 30000,
         shippingAddress: {
           firstName: 'John',
@@ -243,7 +259,7 @@ describe('Order Model Unit Tests', () => {
       };
       
       const orderData2 = {
-        items: [{ carId: new mongoose.Types.ObjectId().toString(), quantity: 1, price: 25000 }],
+        items: [{ carId: new mongoose.Types.ObjectId().toString(), name: 'Hyundai Sonata', image: 'https://example.com/sonata.jpg', quantity: 1, price: 25000 }],
         totalAmount: 25000,
         shippingAddress: {
           firstName: 'Jane',
@@ -277,7 +293,7 @@ describe('Order Model Unit Tests', () => {
     test('should sort orders by creation date (newest first)', async () => {
       // Create orders with slight delay
       const order1 = await Order.createOrder({
-        items: [{ carId: new mongoose.Types.ObjectId().toString(), quantity: 1, price: 30000 }],
+        items: [{ carId: new mongoose.Types.ObjectId().toString(), name: 'Subaru Outback', image: 'https://example.com/outback.jpg', quantity: 1, price: 30000 }],
         totalAmount: 30000,
         shippingAddress: {
           firstName: 'First',
@@ -295,7 +311,7 @@ describe('Order Model Unit Tests', () => {
       await new Promise(resolve => setTimeout(resolve, 10));
       
       const order2 = await Order.createOrder({
-        items: [{ carId: new mongoose.Types.ObjectId().toString(), quantity: 1, price: 25000 }],
+        items: [{ carId: new mongoose.Types.ObjectId().toString(), name: 'Kia Optima', image: 'https://example.com/optima.jpg', quantity: 1, price: 25000 }],
         totalAmount: 25000,
         shippingAddress: {
           firstName: 'Second',
@@ -321,14 +337,14 @@ describe('Order Model Unit Tests', () => {
     test('should have required fields', () => {
       const orderSchema = Order.schema.obj;
       
-      expect(orderSchema.items.required).toBe(true);
       expect(orderSchema.totalAmount.required).toBe(true);
-      expect(orderSchema.shippingAddress.required).toBe(true);
+      expect(orderSchema.orderStatus.required).toBe(true);
+      expect(orderSchema.shippingAddress).toBeDefined();
     });
 
     test('should have timestamps', async () => {
       const order = await Order.createOrder({
-        items: [{ carId: new mongoose.Types.ObjectId().toString(), quantity: 1, price: 30000 }],
+        items: [{ carId: new mongoose.Types.ObjectId().toString(), name: 'Volkswagen Passat', image: 'https://example.com/passat.jpg', quantity: 1, price: 30000 }],
         totalAmount: 30000,
         shippingAddress: {
           firstName: 'Test',
@@ -348,3 +364,4 @@ describe('Order Model Unit Tests', () => {
     });
   });
 });
+

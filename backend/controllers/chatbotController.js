@@ -1,5 +1,35 @@
 const Car = require('../Models/carModel');
 
+// Static car dataset for when database is not available
+const staticCarsData = [
+  {
+    _id: '1',
+    brand: 'MG',
+    model: 'MG6',
+    year: 2023,
+    price: 22000,
+    category: 'Sedan',
+    transmission: 'CVT',
+    fuelType: 'Gasoline',
+    seats: 5,
+    color: 'Various',
+    status: 'available',
+  }
+];
+
+// Function to get available cars (from database or static data)
+const getAvailableCarsData = async () => {
+  try {
+    const cars = await Car.find({ status: 'available' })
+      .select('brand model year price category transmission fuelType seats color images')
+      .limit(50);
+    return cars.length > 0 ? cars : staticCarsData;
+  } catch (error) {
+    console.log('Database not available, using static car data');
+    return staticCarsData;
+  }
+};
+
 // Function to detect if query needs web search
 const needsWebSearch = (message) => {
   const lowerMessage = message.toLowerCase();
@@ -136,10 +166,8 @@ const chatWithBot = async (req, res) => {
     const validLanguages = ['english', 'arabic'];
     const selectedLanguage = validLanguages.includes(language) ? language : 'english';
 
-    // Fetch available cars from database
-    const availableCars = await Car.find({ status: 'available' })
-      .select('brand model year price category transmission fuelType seats color')
-      .limit(50);
+    // Fetch available cars from database or static data
+    const availableCars = await getAvailableCarsData();
 
     // Check if web search is needed
     const requiresWebSearch = needsWebSearch(message);
@@ -308,10 +336,7 @@ const chatWithBot = async (req, res) => {
 // Get available cars for chatbot context
 const getAvailableCars = async (req, res) => {
   try {
-    const cars = await Car.find({ status: 'available' })
-      .select('brand model year price category transmission fuelType seats color images')
-      .limit(50);
-
+    const cars = await getAvailableCarsData();
     res.status(200).json({ cars });
   } catch (error) {
     console.error('Error fetching cars:', error);
@@ -321,5 +346,8 @@ const getAvailableCars = async (req, res) => {
 
 module.exports = {
   chatWithBot,
-  getAvailableCars
+  getAvailableCars,
+  getAvailableCarsData,
+  needsWebSearch,
+  performWebSearch
 };

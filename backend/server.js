@@ -81,8 +81,13 @@ mongoose.connect(process.env.MONGO_URI)
     })
   })
   .catch((err) => {
-    console.error('Database connection error:', err)
-    process.exit(1)
+    console.error('Database connection error:', err.message)
+    console.log('Starting server without database connection for testing purposes...')
+    // listen to port even without database
+    const PORT = process.env.PORT || 4000;
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT} (without database)`)
+    })
   })
 
 // Graceful shutdown

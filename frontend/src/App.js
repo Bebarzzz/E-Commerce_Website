@@ -31,8 +31,8 @@ function App() {
             <Route path='/order-confirmed' element={<OrderConfirmed />} />
             <Route path='/login' element={<LoginSignup />} />
             <Route path='/contact' element={<Contact />} />
-            <Route path='/chatbot' element={<Chatbot />} />
           </Routes>
+          <Chatbot />
         </BrowserRouter>
       </NotificationProvider>
     </div>

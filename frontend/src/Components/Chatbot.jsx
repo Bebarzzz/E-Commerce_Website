@@ -1,4 +1,33 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
+
+const translations = {
+  english: {
+    title: 'Car Assistant',
+    placeholder: 'Ask about cars...',
+    send: 'Send',
+    greeting: 'Hello! I\'m your car assistant. How can I help you find the perfect car today?',
+    switchLang: 'Switch to Arabic',
+    exampleQuestions: [
+      'Show me family SUVs under $50,000',
+      'What\'s the most fuel-efficient sedan?',
+      'I need a luxury car with advanced safety features',
+      'Best electric cars available?'
+    ]
+  },
+  arabic: {
+    title: 'مساعد السيارات',
+    placeholder: 'اسأل عن السيارات...',
+    send: 'إرسال',
+    greeting: 'مرحباً! أنا مساعدك للسيارات. كيف يمكنني مساعدتك في العثور على السيارة المثالية اليوم؟',
+    switchLang: 'التبديل إلى الإنجليزية',
+    exampleQuestions: [
+      'أرني سيارات SUV عائلية بأقل من 50,000 دولار',
+      'ما هي السيارة الأكثر كفاءة في استهلاك الوقود؟',
+      'أحتاج سيارة فاخرة مع ميزات أمان متقدمة',
+      'أفضل السيارات الكهربائية المتوفرة؟'
+    ]
+  }
+};
 
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,36 +38,7 @@ const Chatbot = () => {
   const messagesEndRef = useRef(null);
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:4000';
 
-  const translations = {
-    english: {
-      title: 'Car Assistant',
-      placeholder: 'Ask about cars...',
-      send: 'Send',
-      greeting: 'Hello! I\'m your car assistant. How can I help you find the perfect car today?',
-      switchLang: 'Switch to Arabic',
-      exampleQuestions: [
-        'Show me family SUVs under $50,000',
-        'What\'s the most fuel-efficient sedan?',
-        'I need a luxury car with advanced safety features',
-        'Best electric cars available?'
-      ]
-    },
-    arabic: {
-      title: 'مساعد السيارات',
-      placeholder: 'اسأل عن السيارات...',
-      send: 'إرسال',
-      greeting: 'مرحباً! أنا مساعدك للسيارات. كيف يمكنني مساعدتك في العثور على السيارة المثالية اليوم؟',
-      switchLang: 'التبديل إلى الإنجليزية',
-      exampleQuestions: [
-        'أرني سيارات SUV عائلية بأقل من 50,000 دولار',
-        'ما هي السيارة الأكثر كفاءة في استهلاك الوقود؟',
-        'أحتاج سيارة فاخرة مع ميزات أمان متقدمة',
-        'أفضل السيارات الكهربائية المتوفرة؟'
-      ]
-    }
-  };
-
-  const t = translations[language];
+  const t = useMemo(() => translations[language], [language]);
 
   useEffect(() => {
     if (messages.length === 0) {
@@ -48,7 +48,7 @@ const Chatbot = () => {
         timestamp: new Date()
       }]);
     }
-  }, [language, messages.length]);
+  }, [language, messages.length, t.greeting]);
 
   useEffect(() => {
     scrollToBottom();

@@ -27,14 +27,13 @@ jobs:
         working-directory: ./frontend
         run: npm install
       
-      - name: Quick smoke test (critical component only)
+      - name: Run tests
         working-directory: ./frontend
         env:
           CI: true
         run: npm test -- --testPathPattern="Navbar.test" --watchAll=false --maxWorkers=2
-        continue-on-error: true
       
-      - name: Build application
+      - name: Build application (validates syntax and dependencies)
         working-directory: ./frontend
         env:
           REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
@@ -85,7 +84,7 @@ jobs:
       - name: Notify deployment status
         if: always()
         run: |
-          if [ ${{ job.status }} == 'success' ]; then
+          if [ "${{ job.status }}" == "success" ]; then
             echo "✅ Frontend deployment successful!"
           else
             echo "❌ Frontend deployment failed!"

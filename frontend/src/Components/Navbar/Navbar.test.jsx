@@ -43,11 +43,23 @@ describe('Navbar Component', () => {
   });
 
   test('shows cart item count', () => {
-    renderWithRouter(<Navbar />);
+    const contextWithItems = {
+      getTotalCartItems: jest.fn(() => 3),
+      all_product: []
+    };
     
-    // Look for cart count badge
-    const cartCount = screen.getByText('3');
+    render(
+      <BrowserRouter>
+        <ShopContext.Provider value={contextWithItems}>
+          <Navbar />
+        </ShopContext.Provider>
+      </BrowserRouter>
+    );
+    
+    // Look for cart count badge in the nav-cart-count div
+    const cartCount = document.querySelector('.nav-cart-count');
     expect(cartCount).toBeInTheDocument();
+    expect(cartCount).toHaveTextContent('3');
   });
 
   test('updates cart count when context changes', () => {
@@ -94,11 +106,11 @@ describe('Navbar Component', () => {
     expect(localStorage.getItem('auth-token')).toBeNull();
   });
 
-  test('navigates to shop page when clicking shop link', () => {
+  test('navigates to new cars page when clicking new cars link', () => {
     renderWithRouter(<Navbar />);
     
-    const shopLink = screen.getByText(/shop/i);
-    expect(shopLink).toHaveAttribute('href');
+    const newCarsLink = screen.getByText(/new cars/i);
+    expect(newCarsLink).toHaveAttribute('href', '/new-cars');
   });
 
   test('navigates to cart page when clicking cart', () => {

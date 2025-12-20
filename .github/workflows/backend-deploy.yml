@@ -29,9 +29,12 @@ jobs:
         working-directory: ./backend
         run: npm ci
       
-      - name: Run tests
+      - name: Quick smoke test (critical models only)
         working-directory: ./backend
-        run: npm test || echo "No tests specified"
+        env:
+          NODE_ENV: test
+          JWT_SECRET: test-secret-key
+        run: npm run test:unit -- --testPathPattern="userModel|carModel" --maxWorkers=2
       
       - name: Check for syntax errors
         working-directory: ./backend

@@ -29,9 +29,11 @@ jobs:
         working-directory: ./frontend
         run: npm install
       
-      - name: Run tests
+      - name: Quick smoke test (critical component only)
         working-directory: ./frontend
-        run: CI=true npm test || echo "No tests to run"
+        env:
+          CI: true
+        run: npm test -- --testPathPattern="Navbar.test" --watchAll=false --maxWorkers=2
       
       - name: Build application
         working-directory: ./frontend

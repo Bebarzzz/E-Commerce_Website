@@ -1,0 +1,128 @@
+name: Run Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+  push:
+    branches:
+      - '**'
+
+jobs:
+  backend-tests:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+      
+      - name: Run unit tests
+        working-directory: ./backend
+        env:
+          NODE_ENV: test
+          JWT_SECRET: test-secret-key
+        run: npm run test:unit
+      
+      - name: Run integration tests
+        working-directory: ./backend
+        env:
+          NODE_ENV: test
+          JWT_SECRET: test-secret-key
+        run: npm run test:integration
+      
+      - name: Generate coverage report
+        working-directory: ./backend
+        env:
+          NODE_ENV: test
+          JWT_SECRET: test-secret-key
+        run: npm test -- --coverage
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./backend/coverage/lcov.info
+          flags: backend
+          name: backend-coverage
+        continue-on-error: true
+      
+      - name: Comment PR with coverage
+        if: github.event_name == 'pull_request'
+        uses: romeovs/lcov-reporter-action@v0.3.1
+        with:
+          lcov-file: ./backend/coverage/lcov.info
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+  frontend-tests:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm install
+      
+      - name: Run tests with coverage
+        working-directory: ./frontend
+        env:
+          CI: true
+        run: npm test -- --coverage --watchAll=false
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./frontend/coverage/lcov.info
+          flags: frontend
+          name: frontend-coverage
+        continue-on-error: true
+      
+      - name: Comment PR with coverage
+        if: github.event_name == 'pull_request'
+        uses: romeovs/lcov-reporter-action@v0.3.1
+        with:
+          lcov-file: ./frontend/coverage/lcov.info
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+  test-summary:
+    name: Test Summary
+    needs: [backend-tests, frontend-tests]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: Check test results
+        run: |
+          if [ "${{ needs.backend-tests.result }}" == "success" ] && [ "${{ needs.frontend-tests.result }}" == "success" ]; then
+            echo "✅ All tests passed!"
+            echo "Backend: ${{ needs.backend-tests.result }}"
+            echo "Frontend: ${{ needs.frontend-tests.result }}"
+          else
+            echo "❌ Some tests failed!"
+            echo "Backend: ${{ needs.backend-tests.result }}"
+            echo "Frontend: ${{ needs.frontend-tests.result }}"
+            exit 1
+          fi

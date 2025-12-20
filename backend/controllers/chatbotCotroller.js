@@ -1,10 +1,78 @@
-const getSystemPrompt = (language, availableCars) => {
+const Car = require('../Models/carModel');
+
+// Web search function using DuckDuckGo instant answers API
+const searchWeb = async (query) => {
+  try {
+    const searchUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`;
+    const response = await fetch(searchUrl);
+    const data = await response.json();
+
+    let result = '';
+
+    // Extract instant answer if available
+    if (data.Answer) {
+      result += `Answer: ${data.Answer}\n\n`;
+    }
+
+    // Extract abstract if available
+    if (data.Abstract) {
+      result += `Summary: ${data.Abstract}\n\n`;
+    }
+
+    // Extract related topics
+    if (data.RelatedTopics && data.RelatedTopics.length > 0) {
+      result += 'Related Information:\n';
+      data.RelatedTopics.slice(0, 3).forEach(topic => {
+        if (topic.Text) {
+          result += `- ${topic.Text}\n`;
+        }
+      });
+    }
+
+    return result || 'I couldn\'t find specific information for your query. Could you please rephrase or provide more details?';
+  } catch (error) {
+    console.error('Web search error:', error);
+    return 'I\'m having trouble searching the web right now. Please try again later.';
+  }
+};
+
+// Function to determine if query is car-related
+const isCarRelated = (message, availableCars) => {
+  const carKeywords = ['car', 'vehicle', 'auto', 'automobile', 'drive', 'driving', 'buy', 'purchase', 'price', 'model', 'brand'];
+  const messageLower = message.toLowerCase();
+
+  // Check for car-specific keywords
+  const hasCarKeywords = carKeywords.some(keyword => messageLower.includes(keyword));
+
+  // Check if message mentions specific cars from inventory
+  const mentionsSpecificCar = availableCars.some(car =>
+    messageLower.includes(car.brand.toLowerCase()) ||
+    messageLower.includes(car.model.toLowerCase())
+  );
+
+  return hasCarKeywords || mentionsSpecificCar;
+};
+
+const getSystemPrompt = (language, availableCars, isWebSearch = false) => {
   const carsInfo = availableCars.map(car => 
     `- ${car.brand} ${car.model} (${car.year}): $${car.price}, ${car.category}, ${car.transmission}, ${car.fuelType}, ${car.seats} seats, ${car.color}`
   ).join('\n');
 
   const prompts = {
-    english: `You are a helpful car sales assistant for an online car dealership. Your role is to:
+    english: isWebSearch ? `You are a helpful AI assistant with access to web search capabilities. Your role is to:
+1. Answer general questions and provide information on any topic
+2. Search the web for current information, facts, and answers
+3. Be informative, accurate, and helpful
+4. Keep responses concise but comprehensive
+5. If you find relevant information, summarize it clearly
+
+Guidelines:
+- Always provide accurate information based on available data
+- If information is time-sensitive, note that it may change
+- Be conversational and engaging
+- Ask for clarification if the query is ambiguous` :
+
+`You are a helpful car sales assistant for an online car dealership. Your role is to:
 1. Help customers find the perfect car based on their needs and budget
 2. Provide detailed information about specific cars
 3. Make personalized recommendations
@@ -21,7 +89,20 @@ Guidelines:
 - Keep responses concise but informative
 - If asked about financing or delivery, inform them to contact sales for details`,
 
-    arabic: `أنت مساعد مبيعات سيارات مفيد لوكالة سيارات عبر الإنترنت. دورك هو:
+    arabic: isWebSearch ? `أنت مساعد ذكي مفيد لديك إمكانية البحث على الويب. دورك هو:
+1. الإجابة على الأسئلة العامة وتقديم معلومات عن أي موضوع
+2. البحث على الويب للحصول على معلومات حديثة وحقائق وإجابات
+3. كن معلوماتيًا ودقيقًا ومفيدًا
+4. اجعل الردود موجزة ولكن شاملة
+5. إذا وجدت معلومات ذات صلة، لخصها بوضوح
+
+الإرشادات:
+- قدم دائمًا معلومات دقيقة بناءً على البيانات المتاحة
+- إذا كانت المعلومات حساسة زمنيًا، لاحظ أنها قد تتغير
+- كن محادثًا وجذابًا
+- اطلب توضيحًا إذا كان الاستعلام غامضًا` :
+
+`أنت مساعد مبيعات سيارات مفيد لوكالة سيارات عبر الإنترنت. دورك هو:
 1. مساعدة العملاء في العثور على السيارة المثالية بناءً على احتياجاتهم وميزانيتهم
 2. تقديم معلومات مفصلة عن سيارات محددة
 3. تقديم توصيات شخصية
@@ -57,8 +138,21 @@ const chatWithBot = async (req, res) => {
 
     // Fetch available cars from database
     const availableCars = await Car.find({ status: 'available' })
-      .select('brand model year price category transmission fuelType seats color')
+      .select('brand model year price category transmission fuelType seats color images')
       .limit(50);
+
+    // Determine if the query is car-related
+    const carRelated = isCarRelated(message, availableCars);
+    const useWebSearch = !carRelated;
+
+    let systemPrompt = getSystemPrompt(selectedLanguage, availableCars, useWebSearch);
+    let userMessage = message;
+
+    // If using web search, get web results and include them in context
+    if (useWebSearch) {
+      const webResults = await searchWeb(message);
+      userMessage = `${message}\n\nWeb search results:\n${webResults}`;
+    }
 
     // Build conversation history for Claude
     const messages = [
@@ -68,7 +162,7 @@ const chatWithBot = async (req, res) => {
       })),
       {
         role: 'user',
-        content: message
+        content: userMessage
       }
     ];
 
@@ -83,7 +177,7 @@ const chatWithBot = async (req, res) => {
       body: JSON.stringify({
         model: 'claude-3-5-sonnet-20241022',
         max_tokens: 1024,
-        system: getSystemPrompt(selectedLanguage, availableCars),
+        system: systemPrompt,
         messages: messages
       })
     });
@@ -95,11 +189,11 @@ const chatWithBot = async (req, res) => {
     const data = await response.json();
     const botResponse = data.content[0].text;
 
-    // Extract car recommendations if any are mentioned
-    const recommendedCars = availableCars.filter(car => {
+    // Extract car recommendations if any are mentioned (only for car-related queries)
+    const recommendedCars = carRelated ? availableCars.filter(car => {
       const carIdentifier = `${car.brand} ${car.model}`.toLowerCase();
       return botResponse.toLowerCase().includes(carIdentifier);
-    }).slice(0, 3);
+    }).slice(0, 3) : [];
 
     res.status(200).json({
       message: botResponse,
@@ -111,7 +205,8 @@ const chatWithBot = async (req, res) => {
         price: car.price,
         image: car.images?.[0] || ''
       })),
-      language: selectedLanguage
+      language: selectedLanguage,
+      isWebSearch: useWebSearch
     });
 
   } catch (error) {

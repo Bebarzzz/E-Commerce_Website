@@ -2,30 +2,40 @@ import React, { useState, useRef, useEffect, useMemo } from 'react';
 
 const translations = {
   english: {
-    title: 'Car Assistant',
-    placeholder: 'Ask about cars...',
+    title: 'AI Assistant',
+    placeholder: 'Ask me anything...',
     send: 'Send',
-    greeting: 'Hello! I\'m your car assistant. How can I help you find the perfect car today?',
+    greeting: 'Hello! I\'m your AI assistant. I can help you with car recommendations and answer general questions. How can I help you today?',
     switchLang: 'Switch to Arabic',
     exampleQuestions: [
       'Show me family SUVs under $50,000',
       'What\'s the most fuel-efficient sedan?',
       'I need a luxury car with advanced safety features',
-      'Best electric cars available?'
-    ]
+      'Best electric cars available?',
+      'What\'s the weather like today?',
+      'How to change a car tire?',
+      'Latest news about electric vehicles',
+      'Car maintenance tips'
+    ],
+    webSearch: '🔍 Web search used'
   },
   arabic: {
-    title: 'مساعد السيارات',
-    placeholder: 'اسأل عن السيارات...',
+    title: 'المساعد الذكي',
+    placeholder: 'اسألني أي شيء...',
     send: 'إرسال',
-    greeting: 'مرحباً! أنا مساعدك للسيارات. كيف يمكنني مساعدتك في العثور على السيارة المثالية اليوم؟',
+    greeting: 'مرحباً! أنا مساعدك الذكي. يمكنني مساعدتك في توصيات السيارات والإجابة على الأسئلة العامة. كيف يمكنني مساعدتك اليوم؟',
     switchLang: 'التبديل إلى الإنجليزية',
     exampleQuestions: [
       'أرني سيارات SUV عائلية بأقل من 50,000 دولار',
       'ما هي السيارة الأكثر كفاءة في استهلاك الوقود؟',
       'أحتاج سيارة فاخرة مع ميزات أمان متقدمة',
-      'أفضل السيارات الكهربائية المتوفرة؟'
-    ]
+      'أفضل السيارات الكهربائية المتوفرة؟',
+      'ما هو الطقس اليوم؟',
+      'كيفية تغيير إطار السيارة؟',
+      'آخر الأخبار عن السيارات الكهربائية',
+      'نصائح صيانة السيارة'
+    ],
+    webSearch: '🔍 تم استخدام البحث على الويب'
   }
 };
 
@@ -35,8 +45,51 @@ const Chatbot = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [language, setLanguage] = useState('english');
   const [isLoading, setIsLoading] = useState(false);
+  const [suggestedQuestions, setSuggestedQuestions] = useState([]);
   const messagesEndRef = useRef(null);
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:4000';
+
+  const generateSuggestions = (lastMessage, isWebSearch) => {
+    const suggestions = [];
+    
+    if (isWebSearch) {
+      // General knowledge suggestions
+      if (language === 'english') {
+        suggestions.push(
+          'Tell me more about this topic',
+          'What are the latest developments?',
+          'How does this affect me?',
+          'Can you explain this in simple terms?'
+        );
+      } else {
+        suggestions.push(
+          'أخبرني المزيد عن هذا الموضوع',
+          'ما هي التطورات الأخيرة؟',
+          'كيف يؤثر هذا عليّ؟',
+          'هل يمكنك شرح هذا بكلمات بسيطة؟'
+        );
+      }
+    } else {
+      // Car-related suggestions
+      if (language === 'english') {
+        suggestions.push(
+          'What\'s the price range?',
+          'Show me similar options',
+          'What features does it have?',
+          'Is this car fuel efficient?'
+        );
+      } else {
+        suggestions.push(
+          'ما هو نطاق السعر؟',
+          'أرني خيارات مشابهة',
+          'ما هي الميزات التي يمتلكها؟',
+          'هل هذه السيارة موفرة للوقود؟'
+        );
+      }
+    }
+    
+    return suggestions.slice(0, 3);
+  };
 
   const t = useMemo(() => translations[language], [language]);
 
@@ -73,6 +126,7 @@ const Chatbot = () => {
 
     setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
+    setSuggestedQuestions([]); // Clear suggestions when user sends message
     setIsLoading(true);
 
     try {
@@ -96,10 +150,15 @@ const Chatbot = () => {
         role: 'assistant',
         content: data.message,
         recommendedCars: data.recommendedCars || [],
+        isWebSearch: data.isWebSearch || false,
         timestamp: new Date()
       };
 
       setMessages(prev => [...prev, botMessage]);
+      
+      // Generate suggestions for follow-up questions
+      const suggestions = generateSuggestions(data.message, data.isWebSearch);
+      setSuggestedQuestions(suggestions);
     } catch (error) {
       console.error('Chat error:', error);
       const errorMessage = {
@@ -283,6 +342,16 @@ const Chatbot = () => {
                   <div style={{ whiteSpace: 'pre-wrap', fontSize: '14px' }}>
                     {msg.content}
                   </div>
+                  {msg.isWebSearch && (
+                    <div style={{
+                      fontSize: '11px',
+                      opacity: 0.7,
+                      marginTop: '4px',
+                      fontStyle: 'italic'
+                    }}>
+                      {t.webSearch}
+                    </div>
+                  )}
                   {msg.recommendedCars && msg.recommendedCars.length > 0 && (
                     <div style={{ marginTop: '8px' }}>
                       {msg.recommendedCars.map((car, idx) => (
@@ -313,6 +382,43 @@ const Chatbot = () => {
                     <div className="typing-dot" />
                     <div className="typing-dot" />
                   </div>
+                </div>
+              </div>
+            )}
+
+            {/* Suggested Questions */}
+            {suggestedQuestions.length > 0 && !isLoading && (
+              <div style={{ marginTop: '12px' }}>
+                <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '8px' }}>
+                  {language === 'english' ? '💡 Suggested questions:' : '💡 أسئلة مقترحة:'}
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                  {suggestedQuestions.map((question, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => sendMessage(question)}
+                      style={{
+                        padding: '6px 12px',
+                        backgroundColor: 'white',
+                        border: '1px solid #e0e0e0',
+                        borderRadius: '16px',
+                        cursor: 'pointer',
+                        fontSize: '12px',
+                        color: '#374151',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseOver={(e) => {
+                        e.target.style.backgroundColor = '#f3f4f6';
+                        e.target.style.borderColor = '#2563eb';
+                      }}
+                      onMouseOut={(e) => {
+                        e.target.style.backgroundColor = 'white';
+                        e.target.style.borderColor = '#e0e0e0';
+                      }}
+                    >
+                      {question}
+                    </button>
+                  ))}
                 </div>
               </div>
             )}

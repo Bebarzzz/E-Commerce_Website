@@ -1,10 +1,84 @@
 const Car = require('../Models/carModel');
 
+// Function to detect if query needs web search
+const needsWebSearch = (message) => {
+  const lowerMessage = message.toLowerCase();
+  
+  // Keywords that indicate general car inquiries requiring web search
+  const searchKeywords = [
+    'what is', 'how to', 'latest', 'news', 'review', 'comparison', 'best', 
+    'vs', 'versus', 'specs', 'specifications', 'features', 'history',
+    'evolution', 'future', 'upcoming', 'recall', 'safety rating',
+    'fuel efficiency', 'maintenance', 'tips', 'guide', 'tutorial',
+    'problems', 'issues', 'common', 'famous', 'popular', 'trending'
+  ];
+  
+  // Car-related terms
+  const carTerms = [
+    'car', 'cars', 'vehicle', 'automobile', 'auto', 'sedan', 'suv', 'truck',
+    'hatchback', 'coupe', 'convertible', 'wagon', 'minivan', 'pickup',
+    'motorcycle', 'bike', 'electric', 'hybrid', 'gasoline', 'diesel',
+    'engine', 'transmission', 'tires', 'brakes', 'battery', 'charging'
+  ];
+  
+  const hasSearchKeyword = searchKeywords.some(keyword => lowerMessage.includes(keyword));
+  const hasCarTerm = carTerms.some(term => lowerMessage.includes(term));
+  
+  // Don't search if asking about available cars or pricing from inventory
+  const inventoryKeywords = ['available', 'price', 'cost', 'buy', 'purchase', 'inventory', 'stock'];
+  const isInventoryQuery = inventoryKeywords.some(keyword => lowerMessage.includes(keyword));
+  
+  return hasSearchKeyword && hasCarTerm && !isInventoryQuery;
+};
+
+// Function to perform web search
+const performWebSearch = async (query) => {
+  try {
+    if (!process.env.GOOGLE_SEARCH_API_KEY || !process.env.GOOGLE_SEARCH_ENGINE_ID) {
+      console.log('Google Search API not configured, skipping web search');
+      return null;
+    }
+
+    const searchQuery = `cars ${query}`;
+    const url = `https://www.googleapis.com/customsearch/v1?key=${process.env.GOOGLE_SEARCH_API_KEY}&cx=${process.env.GOOGLE_SEARCH_ENGINE_ID}&q=${encodeURIComponent(searchQuery)}&num=5`;
+
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Search API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    if (data.items && data.items.length > 0) {
+      const searchResults = data.items.map(item => ({
+        title: item.title,
+        snippet: item.snippet,
+        link: item.link
+      }));
+      
+      return searchResults;
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('Web search error:', error);
+    return null;
+  }
+};
+
 // System prompt for the chatbot
-const getSystemPrompt = (language, availableCars) => {
+const getSystemPrompt = (language, availableCars, searchResults = null) => {
   const carsInfo = availableCars.map(car => 
     `- ${car.brand} ${car.model} (${car.year}): $${car.price}, ${car.category}, ${car.transmission}, ${car.fuelType}, ${car.seats} seats, ${car.color}`
   ).join('\n');
+
+  let webSearchInfo = '';
+  if (searchResults) {
+    webSearchInfo = '\n\nWeb Search Results (use this information to answer general car questions):\n' + 
+      searchResults.map(result => 
+        `Title: ${result.title}\nSummary: ${result.snippet}\nSource: ${result.link}`
+      ).join('\n\n');
+  }
 
   const prompts = {
     english: `You are a helpful car sales assistant for an online car dealership. Your role is to:
@@ -12,34 +86,38 @@ const getSystemPrompt = (language, availableCars) => {
 2. Provide detailed information about specific cars
 3. Make personalized recommendations
 4. Answer questions about features, pricing, and specifications
-5. Be friendly, professional, and concise
+5. Answer general car-related questions using web search results when available
 
 Available cars in our inventory:
-${carsInfo}
+${carsInfo}${webSearchInfo}
 
 Guidelines:
 - Always be helpful and enthusiastic
 - If a customer asks about a car not in inventory, politely inform them and suggest alternatives
 - When recommending cars, consider budget, family size, fuel efficiency, and usage
 - Keep responses concise but informative
-- If asked about financing or delivery, inform them to contact sales for details`,
+- If asked about financing or delivery, inform them to contact sales for details
+- For general car questions (reviews, specs, news, etc.), use the web search results provided above to give accurate information
+- If web search results are available, mention that you're using current web information`,
 
     arabic: `أنت مساعد مبيعات سيارات مفيد لوكالة سيارات عبر الإنترنت. دورك هو:
 1. مساعدة العملاء في العثور على السيارة المثالية بناءً على احتياجاتهم وميزانيتهم
 2. تقديم معلومات مفصلة عن سيارات محددة
 3. تقديم توصيات شخصية
 4. الإجابة على الأسئلة حول الميزات والأسعار والمواصفات
-5. كن ودودًا ومحترفًا وموجزًا
+5. الإجابة على الأسئلة العامة المتعلقة بالسيارات باستخدام نتائج البحث على الويب عند توفرها
 
 السيارات المتوفرة في مخزوننا:
-${carsInfo}
+${carsInfo}${webSearchInfo}
 
 الإرشادات:
 - كن دائمًا مفيدًا ومتحمسًا
 - إذا سأل العميل عن سيارة غير موجودة في المخزون، أخبره بأدب واقترح بدائل
 - عند التوصية بالسيارات، ضع في الاعتبار الميزانية وحجم العائلة وكفاءة الوقود والاستخدام
 - اجعل الردود موجزة ولكن غنية بالمعلومات
-- إذا سُئل عن التمويل أو التسليم، أخبرهم بالاتصال بقسم المبيعات للحصول على التفاصيل`
+- إذا سُئل عن التمويل أو التسليم، أخبرهم بالاتصال بقسم المبيعات للحصول على التفاصيل
+- للأسئلة العامة عن السيارات (مراجعات، مواصفات، أخبار، إلخ)، استخدم نتائج البحث على الويب المقدمة أعلاه لتقديم معلومات دقيقة
+- إذا كانت نتائج البحث على الويب متاحة، اذكر أنك تستخدم معلومات الويب الحالية`
   };
 
   return prompts[language] || prompts.english;
@@ -62,6 +140,18 @@ const chatWithBot = async (req, res) => {
     const availableCars = await Car.find({ status: 'available' })
       .select('brand model year price category transmission fuelType seats color')
       .limit(50);
+
+    // Check if web search is needed
+    const requiresWebSearch = needsWebSearch(message);
+    let searchResults = null;
+    let isWebSearch = false;
+
+    if (requiresWebSearch) {
+      searchResults = await performWebSearch(message);
+      if (searchResults) {
+        isWebSearch = true;
+      }
+    }
 
     // Build conversation history for Claude
     const messages = [
@@ -88,7 +178,7 @@ const chatWithBot = async (req, res) => {
         body: JSON.stringify({
           model: 'claude-3-5-sonnet-20241022',
           max_tokens: 1024,
-          system: getSystemPrompt(selectedLanguage, availableCars),
+          system: getSystemPrompt(selectedLanguage, availableCars, searchResults),
           messages: messages
         })
       });
@@ -202,7 +292,8 @@ const chatWithBot = async (req, res) => {
         price: car.price,
         image: car.images?.[0] || ''
       })),
-      language: selectedLanguage
+      language: selectedLanguage,
+      isWebSearch: isWebSearch
     });
 
   } catch (error) {

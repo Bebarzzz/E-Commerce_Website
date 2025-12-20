@@ -7,8 +7,15 @@ const multer = require("multer")
 const path = require("path")
 require('dotenv').config()
 
+// Set default environment variables if not set
+process.env.MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/ecommerce';
+process.env.JWT_SECRET = process.env.JWT_SECRET || 'default_jwt_secret';
+process.env.ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS || 'http://localhost:3000';
+process.env.PORT = process.env.PORT || 4000;
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+
 //import files 
-const chatbotRoutes = require('./routes/chatbot')
+const chatbotRoutes = require('./controllers/chatbot')
 const userRoutes = require('./routes/user')
 const carRoutes = require('./routes/car')
 const orderRoutes = require('./routes/order')

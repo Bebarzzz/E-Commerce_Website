@@ -76,27 +76,115 @@ const chatWithBot = async (req, res) => {
     ];
 
     // Call Claude API
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.CLAUDE_API_KEY,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-3-5-sonnet-20241022',
-        max_tokens: 1024,
-        system: getSystemPrompt(selectedLanguage, availableCars),
-        messages: messages
-      })
-    });
+    let botResponse;
+    if (process.env.CLAUDE_API_KEY) {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.CLAUDE_API_KEY,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-3-5-sonnet-20241022',
+          max_tokens: 1024,
+          system: getSystemPrompt(selectedLanguage, availableCars),
+          messages: messages
+        })
+      });
 
-    if (!response.ok) {
-      throw new Error(`Claude API error: ${response.statusText}`);
+      if (!response.ok) {
+        throw new Error(`Claude API error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      botResponse = data.content[0].text;
+    } else {
+      // Fallback response when API key is not set
+      const lowerMessage = message.toLowerCase();
+      let response = '';
+      
+      if (lowerMessage.includes('available') && lowerMessage.includes('car')) {
+        if (availableCars.length > 0) {
+          const carsList = availableCars.slice(0, 5).map(car => `${car.brand} ${car.model} (${car.year}) - $${car.price}`).join(', ');
+          response = selectedLanguage === 'english'
+            ? `We currently have these cars available: ${carsList}. Which one interests you?`
+            : `لدينا هذه السيارات المتوفرة حالياً: ${carsList}. أي منها يثير اهتمامك؟`;
+        } else {
+          response = selectedLanguage === 'english'
+            ? "I'm sorry, we don't have any cars available right now. Please check back later!"
+            : "عذراً، ليس لدينا أي سيارات متوفرة الآن. يرجى المحاولة لاحقاً!";
+        }
+      } else if (lowerMessage.includes('suv') || lowerMessage.includes('family') || lowerMessage.includes('عائلي')) {
+        const suvs = availableCars.filter(car => car.category === 'SUV').slice(0, 3);
+        if (suvs.length > 0) {
+          response = selectedLanguage === 'english'
+            ? `For family adventures, I recommend these SUVs: ${suvs.map(car => `${car.brand} ${car.model} for $${car.price}`).join(', ')}. They're perfect for road trips with the kids!`
+            : `للمغامرات العائلية، أوصي بهذه السيارات SUV: ${suvs.map(car => `${car.brand} ${car.model} بسعر $${car.price}`).join(', ')}. مثالية للرحلات مع الأطفال!`;
+        } else {
+          response = selectedLanguage === 'english'
+            ? "I don't have any SUVs available right now, but I can suggest some spacious alternatives for your family!"
+            : "ليس لدي أي سيارات SUV متوفرة الآن، لكن يمكنني اقتراح بعض البدائل الواسعة لعائلتك!";
+        }
+      } else if (lowerMessage.includes('sedan') || lowerMessage.includes('economy') || lowerMessage.includes('اقتصادي')) {
+        const sedans = availableCars.filter(car => car.category === 'Sedan').slice(0, 3);
+        if (sedans.length > 0) {
+          response = selectedLanguage === 'english'
+            ? `If you're looking for fuel efficiency, these sedans are great: ${sedans.map(car => `${car.brand} ${car.model} for $${car.price}`).join(', ')}. Very economical to run!`
+            : `إذا كنت تبحث عن كفاءة الوقود، هذه السيارات رائعة: ${sedans.map(car => `${car.brand} ${car.model} بسعر $${car.price}`).join(', ')}. اقتصادية جداً في التشغيل!`;
+        } else {
+          response = selectedLanguage === 'english'
+            ? "Let me show you our sedan options - they're perfect for daily commuting!"
+            : "دعني أريك خياراتنا من السيارات - مثالية للتنقل اليومي!";
+        }
+      } else if (lowerMessage.includes('luxury') || lowerMessage.includes('expensive') || lowerMessage.includes('فاخر')) {
+        const luxury = availableCars.filter(car => car.price > 50000).slice(0, 3);
+        if (luxury.length > 0) {
+          response = selectedLanguage === 'english'
+            ? `For that premium feel, check out these luxury options: ${luxury.map(car => `${car.brand} ${car.model} for $${car.price}`).join(', ')}. Pure sophistication!`
+            : `للشعور الفاخر، تحقق من هذه الخيارات: ${luxury.map(car => `${car.brand} ${car.model} بسعر $${car.price}`).join(', ')}. أناقة نقية!`;
+        } else {
+          response = selectedLanguage === 'english'
+            ? "We have some high-end vehicles that might suit your taste for luxury!"
+            : "لدينا بعض المركبات عالية الجودة التي قد تناسب ذوقك للفخامة!";
+        }
+      } else if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('مرحبا')) {
+        response = selectedLanguage === 'english'
+          ? "Hello there! I'm excited to help you find your perfect car. What are you in the market for today?"
+          : "مرحباً! أنا متحمس لمساعدتك في العثور على سيارتك المثالية. ما الذي تبحث عنه اليوم؟";
+      } else if (lowerMessage.includes('price') || lowerMessage.includes('cost') || lowerMessage.includes('سعر')) {
+        const affordable = availableCars.filter(car => car.price < 30000).slice(0, 3);
+        if (affordable.length > 0) {
+          response = selectedLanguage === 'english'
+            ? `We have some great deals under $30,000: ${affordable.map(car => `${car.brand} ${car.model} for $${car.price}`).join(', ')}. Budget-friendly options!`
+            : `لدينا بعض العروض الرائعة تحت 30,000 دولار: ${affordable.map(car => `${car.brand} ${car.model} بسعر $${car.price}`).join(', ')}. خيارات مناسبة للميزانية!`;
+        } else {
+          response = selectedLanguage === 'english'
+            ? "Tell me your budget and I'll find cars that fit perfectly!"
+            : "أخبرني بميزانيتك وسأجد سيارات تناسب تماماً!";
+        }
+      } else if (lowerMessage.includes('new') || lowerMessage.includes('used') || lowerMessage.includes('جديد') || lowerMessage.includes('مستعمل')) {
+        response = selectedLanguage === 'english'
+          ? "We have both new and used cars available. What type of vehicle are you interested in? New cars come with full warranty, while our certified used cars are thoroughly inspected!"
+          : "لدينا سيارات جديدة ومستعملة متاحة. ما نوع السيارة التي تهتم بها؟ السيارات الجديدة تأتي مع ضمان كامل، بينما سياراتنا المستعملة المعتمدة تم فحصها بدقة!";
+      } else {
+        // General conversational responses
+        const generalResponses = selectedLanguage === 'english' ? [
+          "That's interesting! While I'm primarily here to help with cars, I'd be happy to chat about automotive topics. What kind of vehicle are you thinking about?",
+          "I love talking about cars! Whether it's performance, comfort, or reliability, I can help you find the right one. What's on your mind?",
+          "Great question! I'm your car expert. Let me know what you're looking for - from compact cars to luxury SUVs, I've got recommendations!",
+          "I'm here to make your car buying experience amazing! Tell me more about what you need, and I'll guide you to the perfect vehicle."
+        ] : [
+          "هذا مثير للاهتمام! بينما أنا هنا بشكل أساسي للمساعدة في السيارات، سأكون سعيداً للحديث عن مواضيع السيارات. ما نوع السيارة التي تفكر فيها؟",
+          "أحب الحديث عن السيارات! سواء كان الأداء أو الراحة أو الموثوقية، يمكنني مساعدتك في العثور على المناسب. ما الذي يدور في ذهنك؟",
+          "سؤال رائع! أنا خبير السيارات الخاص بك. أخبرني بما تحتاجه، وسأرشدك إلى السيارة المثالية.",
+          "أنا هنا لجعل تجربة شراء سيارتك رائعة! أخبرني المزيد عما تحتاجه، وسأرشدك إلى السيارة المثالية."
+        ];
+        response = generalResponses[Math.floor(Math.random() * generalResponses.length)];
+      }
+      
+      botResponse = response;
     }
-
-    const data = await response.json();
-    const botResponse = data.content[0].text;
 
     // Extract car recommendations if any are mentioned
     const recommendedCars = availableCars.filter(car => {

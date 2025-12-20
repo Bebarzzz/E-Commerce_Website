@@ -55,12 +55,28 @@ This folder contains comprehensive documentation for all aspects of the project.
   - Sample data
 
 ### Testing
-- **[Testing Guide](TESTING.md)** - Testing strategies
+- **[Testing Guide](TESTING.md)** - Testing overview and strategies
   - Frontend testing (React)
   - Backend testing (Node.js)
   - Integration testing
   - E2E testing
   - Manual testing checklists
+- **[TEST_CASES.md](TEST_CASES.md)** - ✅ Comprehensive test documentation (270+ tests)
+  - Detailed test case tables
+  - Coverage reports
+  - Test statistics by feature
+- **[TESTING_GUIDE.md](TESTING_GUIDE.md)** - Quick reference for running tests
+  - Command reference
+  - Test structure
+  - Troubleshooting
+- **[TEST_IMPLEMENTATION_SUMMARY.md](TEST_IMPLEMENTATION_SUMMARY.md)** - Implementation overview
+  - What was created
+  - Test statistics
+  - How to run
+- **[TEST_EXECUTION_CHECKLIST.md](TEST_EXECUTION_CHECKLIST.md)** - Testing checklist
+  - Pre-testing setup
+  - Execution steps
+  - Verification checklist
 
 ---
 

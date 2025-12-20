@@ -16,6 +16,20 @@ A full-stack e-commerce web application for buying and selling cars (both new an
 - [Contributing](#contributing)
 - [License](#license)
 
+## 📚 Documentation
+
+Comprehensive documentation is available in the [`docs/`](docs/) folder:
+
+- **[User Guide](docs/USER_GUIDE.md)** - Complete guide for customers using the platform
+- **[Admin Guide](docs/ADMIN_GUIDE.md)** - Documentation for administrators managing the platform
+- **[API Reference](docs/API_REFERENCE.md)** - Detailed API endpoint documentation with examples
+- **[Database Schema](docs/DATABASE_SCHEMA.md)** - Complete database structure and relationships
+- **[Contributing Guide](docs/CONTRIBUTING.md)** - Developer guide for contributing to the project
+- **[Testing Guide](docs/TESTING.md)** - Testing strategies and implementation
+- **[Deployment Guide](docs/DEPLOYMENT.md)** - Production deployment and operations
+- **[Troubleshooting](docs/TROUBLESHOOTING.md)** - Common issues and solutions
+- **[Architecture](ARCHITECTURE.md)** - System architecture and design patterns
+
 ## ✨ Features
 
 ### Customer Features

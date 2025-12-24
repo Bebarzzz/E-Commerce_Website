@@ -1,7 +1,7 @@
 const request = require('supertest');
 const express = require('express');
 const orderRoutes = require('../../../routes/order');
-const { createTestUser, generateToken } = require('../../helpers/testHelpers');
+const { createTestUser, createTestAdmin, generateToken } = require('../../helpers/testHelpers');
 const mongoose = require('mongoose');
 require('../../setup');
 
@@ -14,11 +14,16 @@ describe('Order API Integration Tests', () => {
   
   let userToken;
   let userId;
+  let adminToken;
+  let adminId;
 
   beforeEach(async () => {
     const user = await createTestUser();
+    const admin = await createTestAdmin();
     userId = user._id.toString();
+    adminId = admin._id.toString();
     userToken = generateToken(userId);
+    adminToken = generateToken(adminId);
   });
 
   describe('POST /api/order', () => {
@@ -238,7 +243,8 @@ describe('Order API Integration Tests', () => {
 
     test('should return all orders', async () => {
       const response = await request(app)
-        .get('/api/order/showallorders');
+        .get('/api/order/showallorders')
+        .set('Authorization', `Bearer ${adminToken}`);
       
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
@@ -248,7 +254,8 @@ describe('Order API Integration Tests', () => {
 
     test('should return orders with all required fields', async () => {
       const response = await request(app)
-        .get('/api/order/showallorders');
+        .get('/api/order/showallorders')
+        .set('Authorization', `Bearer ${adminToken}`);
       
       expect(response.status).toBe(200);
       const order = response.body.orders[0];
@@ -262,7 +269,8 @@ describe('Order API Integration Tests', () => {
 
     test('should return orders sorted by creation date (newest first)', async () => {
       const response = await request(app)
-        .get('/api/order/showallorders');
+        .get('/api/order/showallorders')
+        .set('Authorization', `Bearer ${adminToken}`);
       
       expect(response.status).toBe(200);
       const orders = response.body.orders;
@@ -280,7 +288,8 @@ describe('Order API Integration Tests', () => {
       await Order.deleteMany({});
       
       const response = await request(app)
-        .get('/api/order/showallorders');
+        .get('/api/order/showallorders')
+        .set('Authorization', `Bearer ${adminToken}`);
       
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
@@ -325,7 +334,8 @@ describe('Order API Integration Tests', () => {
       
       // Retrieve all orders
       const getAllResponse = await request(app)
-        .get('/api/order/showallorders');
+        .get('/api/order/showallorders')
+        .set('Authorization', `Bearer ${adminToken}`);
       
       expect(getAllResponse.status).toBe(200);
       const foundOrder = getAllResponse.body.orders.find(

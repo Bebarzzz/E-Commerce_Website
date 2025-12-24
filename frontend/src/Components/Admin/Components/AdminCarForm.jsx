@@ -28,7 +28,17 @@ const AdminCarForm = ({ initialData, onSubmit, isEdit = false }) => {
         if (initialData) {
             setFormData(prev => ({
                 ...prev,
-                ...initialData,
+                brand: initialData.brand || '',
+                model: initialData.model || '',
+                year: initialData.manufactureYear || initialData.year || new Date().getFullYear(),
+                type: initialData.type || 'Sedan',
+                transmission: initialData.transmissionType || initialData.transmission || 'Automatic',
+                fuel: initialData.engineType || initialData.fuel || 'Gasoline',
+                price: initialData.price || '',
+                engineCapacity: initialData.engineCapacity || '',
+                wheelDriveType: initialData.wheelDriveType || 'FWD',
+                condition: initialData.condition || 'new',
+                description: initialData.description || '',
                 images: [] // Reset file input
             }));
             // Handle existing images for display if needed

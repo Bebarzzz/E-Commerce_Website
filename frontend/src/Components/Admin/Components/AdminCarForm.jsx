@@ -17,6 +17,7 @@ const AdminCarForm = ({ initialData, onSubmit, isEdit = false }) => {
         engineCapacity: '',
         wheelDriveType: 'FWD',
         condition: 'new', // new, used
+        description: '',
         images: [] // User selected files
     });
 
@@ -73,6 +74,7 @@ const AdminCarForm = ({ initialData, onSubmit, isEdit = false }) => {
         data.append('engineCapacity', formData.engineCapacity);
         data.append('wheelDriveType', formData.wheelDriveType);
         data.append('condition', formData.condition);
+        data.append('description', formData.description);
 
         // Append images
         // Note: Backend expectation depends on implementation (images vs image)
@@ -220,6 +222,18 @@ const AdminCarForm = ({ initialData, onSubmit, isEdit = false }) => {
                             <option value="4WD">4WD (Four-Wheel Drive)</option>
                         </select>
                     </div>
+                </div>
+
+                <div className="form-group">
+                    <label>Description</label>
+                    <textarea
+                        name="description"
+                        className="form-control"
+                        rows="4"
+                        value={formData.description}
+                        onChange={handleChange}
+                        placeholder="Enter car description (optional)"
+                    ></textarea>
                 </div>
 
                 <div className="form-group">

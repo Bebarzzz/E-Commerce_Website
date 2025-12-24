@@ -43,6 +43,7 @@ export const addCar = async (carData) => {
       headers: {
         'Authorization': `Bearer ${token}`,
       },
+      credentials: 'include',
       body: carData, // FormData for multipart/form-data
     });
 

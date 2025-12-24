@@ -47,12 +47,12 @@ const AdminOrdersList = () => {
                         {orders.map((order) => (
                             <tr key={order._id || order.id}>
                                 <td>{order._id || order.id}</td>
-                                <td>{new Date(order.date || Date.now()).toLocaleDateString()}</td>
+                                <td>{new Date(order.createdAt).toLocaleDateString()}</td>
                                 <td>{order.items ? order.items.length : 0} items</td>
-                                <td>${order.amount || order.totalAmount}</td>
+                                <td>${order.totalAmount}</td>
                                 <td>
-                                    <span className={`status-badge ${order.status?.toLowerCase() || 'pending'}`}>
-                                        {order.status || 'Pending'}
+                                    <span className={`status-badge ${order.orderStatus?.toLowerCase() || 'pending'}`}>
+                                        {order.orderStatus || 'Pending'}
                                     </span>
                                 </td>
                             </tr>

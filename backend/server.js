@@ -74,10 +74,38 @@ app.use('/api/contact', contactRoutes)
 app.use('/api/admin', adminRoutes)
 
 
+// Migration function to drop incorrect index
+async function runMigrations() {
+  try {
+    const db = mongoose.connection.db;
+    const collections = await db.listCollections({ name: 'orders' }).toArray();
+    
+    if (collections.length > 0) {
+      const indexes = await db.collection('orders').indexes();
+      const problematicIndex = indexes.find(idx => idx.name === 'RreciptURL_1');
+      
+      if (problematicIndex) {
+        console.log('Found problematic index "RreciptURL_1", dropping it...');
+        await db.collection('orders').dropIndex('RreciptURL_1');
+        console.log('Successfully dropped problematic index "RreciptURL_1"');
+      } else {
+        console.log('No problematic index found - database is clean');
+      }
+    }
+  } catch (error) {
+    console.error('Migration error:', error.message);
+    // Don't fail server startup if migration fails
+  }
+}
+
 // connect to db
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => {
+  .then(async () => {
     console.log('connected to database')
+    
+    // Run migrations
+    await runMigrations();
+    
     // listen to port
     const PORT = process.env.PORT || 4000;
     app.listen(PORT, '0.0.0.0', () => {

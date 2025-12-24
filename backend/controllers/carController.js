@@ -39,7 +39,7 @@ const getSingleCar = async (req, res) => {
 }
 
 const addCar = async (req, res) => {
-    const { model, manufactureYear, brand, type, price, engineCapacity, wheelDriveType, engineType, transmissionType, condition } = req.body;
+    const { model, manufactureYear, brand, type, price, engineCapacity, wheelDriveType, engineType, transmissionType, condition, description } = req.body;
 
     try {
         // Get image URLs from uploaded files
@@ -56,6 +56,7 @@ const addCar = async (req, res) => {
             engineType,
             transmissionType,
             condition,
+            description || '',
             images
         );
 
@@ -67,7 +68,7 @@ const addCar = async (req, res) => {
 
 const editCar = async (req, res) => {
     const { id } = req.params;
-    const { model, manufactureYear, brand, type, price, engineCapacity, wheelDriveType, engineType, transmissionType, condition } = req.body;
+    const { model, manufactureYear, brand, type, price, engineCapacity, wheelDriveType, engineType, transmissionType, condition, description } = req.body;
 
     try {
         const updateData = { 
@@ -79,6 +80,11 @@ const editCar = async (req, res) => {
             transmissionType, 
             condition 
         };
+        
+        // Add description if provided
+        if (description !== undefined) {
+            updateData.description = description;
+        }
         
         // Parse numeric fields (FormData sends everything as strings)
         if (manufactureYear !== undefined) {

@@ -106,6 +106,28 @@ const changePassword = async (req, res) => {
     }
 }
 
+// Verify token and return user info (prevents frontend bypass)
+const verifyToken = async (req, res) => {
+    try {
+        // req.user is set by requireAuth middleware after validating JWT
+        const user = req.user;
+        
+        res.status(200).json({
+            success: true,
+            user: {
+                _id: user._id,
+                username: user.username,
+                email: user.email,
+                role: user.role
+            }
+        });
+    } catch (error) {
+        res.status(401).json({
+            success: false,
+            error: 'Token verification failed'
+        });
+    }
+}
 
 
 module.exports = {
@@ -113,5 +135,6 @@ module.exports = {
     signupUser,
     getUserProfile,
     updateUserProfile,
-    changePassword
+    changePassword,
+    verifyToken
 }

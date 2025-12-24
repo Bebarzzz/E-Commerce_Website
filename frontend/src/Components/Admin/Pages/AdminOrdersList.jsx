@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { getAllOrders } from '../../../services/orderService';
 
 const AdminOrdersList = () => {
@@ -38,28 +39,38 @@ const AdminOrdersList = () => {
                         <tr>
                             <th>Order ID</th>
                             <th>Date</th>
+                            <th>Customer</th>
                             <th>Items</th>
                             <th>Total Amount</th>
                             <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {orders.map((order) => (
                             <tr key={order._id || order.id}>
-                                <td>{order._id || order.id}</td>
-                                <td>{new Date(order.createdAt).toLocaleDateString()}</td>
-                                <td>{order.items ? order.items.length : 0} items</td>
-                                <td>${order.totalAmount}</td>
+                                <td className="order-id-cell">{(order._id || order.id).slice(-8)}</td>
+                                <td>{new Date(order.createdAt || order.date || Date.now()).toLocaleDateString()}</td>
                                 <td>
-                                    <span className={`status-badge ${order.orderStatus?.toLowerCase() || 'pending'}`}>
-                                        {order.orderStatus || 'Pending'}
+                                    {order.shippingAddress?.firstName} {order.shippingAddress?.lastName}
+                                </td>
+                                <td>{order.items ? order.items.length : 0} items</td>
+                                <td>${order.totalAmount || order.amount}</td>
+                                <td>
+                                    <span className={`status-badge status-${(order.orderStatus || order.status || 'pending').toLowerCase()}`}>
+                                        {order.orderStatus || order.status || 'Pending'}
                                     </span>
+                                </td>
+                                <td>
+                                    <Link to={`/admin/orders/${order._id || order.id}`} className="btn-view">
+                                        View
+                                    </Link>
                                 </td>
                             </tr>
                         ))}
                         {orders.length === 0 && (
                             <tr>
-                                <td colSpan="5" style={{ textAlign: 'center' }}>No orders found.</td>
+                                <td colSpan="7" style={{ textAlign: 'center' }}>No orders found.</td>
                             </tr>
                         )}
                     </tbody>

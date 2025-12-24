@@ -5,6 +5,7 @@ export const API_ENDPOINTS = {
   // User endpoints
   LOGIN: `${API_BASE_URL}/api/user/login`,
   SIGNUP: `${API_BASE_URL}/api/user/signup`,
+  VERIFY_TOKEN: `${API_BASE_URL}/api/user/verify`,
 
   // Car endpoints
   ADD_CAR: `${API_BASE_URL}/api/car`,
@@ -15,6 +16,8 @@ export const API_ENDPOINTS = {
   // Order endpoints
   GET_ORDERS: `${API_BASE_URL}/api/order/showallorders`,
   CREATE_ORDER: `${API_BASE_URL}/api/order`,
+  GET_ORDER_BY_ID: `${API_BASE_URL}/api/order`,
+  UPDATE_ORDER_STATUS: `${API_BASE_URL}/api/order`,
 
   // Health check
   HEALTH: `${API_BASE_URL}/api/health`,

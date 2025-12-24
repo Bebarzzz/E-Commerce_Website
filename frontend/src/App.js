@@ -18,6 +18,7 @@ import AdminCarsList from './Components/Admin/Pages/AdminCarsList';
 import AdminCarCreate from './Components/Admin/Pages/AdminCarCreate';
 import AdminCarEdit from './Components/Admin/Pages/AdminCarEdit';
 import AdminOrdersList from './Components/Admin/Pages/AdminOrdersList';
+import AdminOrderView from './Components/Admin/Pages/AdminOrderView';
 function App() {
 
   return (
@@ -44,6 +45,7 @@ function App() {
               <Route path='cars/new' element={<AdminCarCreate />} />
               <Route path='cars/:id/edit' element={<AdminCarEdit />} />
               <Route path='orders' element={<AdminOrdersList />} />
+              <Route path='orders/:id' element={<AdminOrderView />} />
             </Route>
           </Routes>
           <Chatbot />

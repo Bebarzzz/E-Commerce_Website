@@ -22,6 +22,42 @@ export const getAllOrders = async () => {
 };
 
 /**
+ * Get a single order by ID
+ * @param {string} orderId - The order ID
+ * @returns {Promise<Object>} Order object
+ */
+export const getOrderById = async (orderId) => {
+  try {
+    const response = await apiRequest(`${API_ENDPOINTS.GET_ORDER_BY_ID}/${orderId}`, {
+      method: 'GET',
+    });
+    return response.order;
+  } catch (error) {
+    console.error('Error fetching order:', error);
+    throw error;
+  }
+};
+
+/**
+ * Update order status
+ * @param {string} orderId - The order ID
+ * @param {string} status - New status ('pending', 'processing', 'shipped', 'delivered', 'cancelled')
+ * @returns {Promise<Object>} Updated order object
+ */
+export const updateOrderStatus = async (orderId, status) => {
+  try {
+    const response = await apiRequest(`${API_ENDPOINTS.UPDATE_ORDER_STATUS}/${orderId}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status }),
+    });
+    return response.order;
+  } catch (error) {
+    console.error('Error updating order status:', error);
+    throw error;
+  }
+};
+
+/**
  * Create a new order
  * @param {Object} orderData - Order details
  * @param {Array} orderData.items - Array of cart items

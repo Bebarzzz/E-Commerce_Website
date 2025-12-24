@@ -5,6 +5,42 @@ import { API_ENDPOINTS, apiRequest } from '../config/api';
  */
 
 /**
+ * Verify token and get user info from backend
+ * This prevents localStorage manipulation attacks
+ * @returns {Promise<Object>} User data including role
+ */
+export const verifyToken = async () => {
+  try {
+    const token = localStorage.getItem('auth-token');
+    if (!token) {
+      throw new Error('No token found');
+    }
+
+    const data = await apiRequest(API_ENDPOINTS.VERIFY_TOKEN, {
+      method: 'GET',
+    });
+
+    // Update localStorage with verified data from server
+    if (data.user) {
+      localStorage.setItem('user-role', data.user.role);
+      localStorage.setItem('user-email', data.user.email);
+      if (data.user._id) {
+        localStorage.setItem('user-id', data.user._id);
+      }
+    }
+
+    return data;
+  } catch (error) {
+    // Clear potentially tampered localStorage on verification failure
+    localStorage.removeItem('auth-token');
+    localStorage.removeItem('user-email');
+    localStorage.removeItem('user-role');
+    localStorage.removeItem('user-id');
+    throw error;
+  }
+};
+
+/**
  * Login user
  * @param {Object} credentials - User credentials
  * @param {string} credentials.email - User email

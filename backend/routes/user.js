@@ -4,7 +4,8 @@ const {
     signupUser,
     getUserProfile,
     updateUserProfile,
-    changePassword
+    changePassword,
+    verifyToken
 } = require('../controllers/userController')
 const { requireAuth } = require('../middleware/requireAuth')
 
@@ -16,6 +17,7 @@ router.post('/login', loginUser)
 router.post('/signup', signupUser)
 
 // Protected routes - require authentication
+router.get('/verify', requireAuth, verifyToken)
 router.get('/profile', requireAuth, getUserProfile)
 router.patch('/profile', requireAuth, updateUserProfile)
 router.patch('/password', requireAuth, changePassword)

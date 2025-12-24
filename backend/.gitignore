@@ -14,6 +14,12 @@ logs/
 *.log
 npm-debug.log*
 
+# Testing
+coverage/
+globalConfig.json
+.eslintcache
+**/__snapshots__/
+
 # PM2
 .pm2/
 

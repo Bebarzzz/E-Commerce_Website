@@ -17,6 +17,7 @@ describe('Car Model Unit Tests', () => {
         'Gasoline',
         'Automatic',
         'new',
+        'A reliable sedan',
         ['https://example.com/image1.jpg']
       );
       

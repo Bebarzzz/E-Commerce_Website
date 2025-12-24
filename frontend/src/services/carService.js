@@ -49,6 +49,11 @@ export const addCar = async (carData) => {
     const data = await response.json();
 
     if (!response.ok) {
+      if (response.status === 401) {
+        localStorage.removeItem('auth-token');
+        localStorage.removeItem('user-email');
+        localStorage.removeItem('user-role');
+      }
       throw new Error(data.error || 'Failed to add car');
     }
 
@@ -134,6 +139,11 @@ export const editCar = async (carId, carData) => {
     const data = await response.json();
 
     if (!response.ok) {
+      if (response.status === 401) {
+        localStorage.removeItem('auth-token');
+        localStorage.removeItem('user-email');
+        localStorage.removeItem('user-role');
+      }
       throw new Error(data.error || 'Failed to edit car');
     }
 

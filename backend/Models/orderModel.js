@@ -94,4 +94,62 @@ orderSchema.statics.createOrder = async function(orderData) {
     return order;
 }
 
+orderSchema.statics.getOrderById = async function(orderId) {
+    const order = await this.findById(orderId).populate('items.carId');
+    if (!order) {
+        throw new Error('Order not found');
+    }
+    return order;
+}
+
+orderSchema.statics.updateOrderStatus = async function(orderId, newStatus) {
+    const validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+    
+    if (!validStatuses.includes(newStatus)) {
+        throw new Error('Invalid order status');
+    }
+    
+    const order = await this.findByIdAndUpdate(
+        orderId,
+        { orderStatus: newStatus },
+        { new: true, runValidators: true }
+    );
+    
+    if (!order) {
+        throw new Error('Order not found');
+    }
+    
+    return order;
+}
+
+orderSchema.statics.getUserOrders = async function(userId) {
+    const orders = await this.find({ userID: userId }).sort({ createdAt: -1 });
+    return orders;
+}
+
+orderSchema.statics.filterOrders = async function(filters) {
+    const query = {};
+    
+    if (filters.status) {
+        query.orderStatus = filters.status;
+    }
+    
+    if (filters.userId) {
+        query.userID = filters.userId;
+    }
+    
+    if (filters.startDate || filters.endDate) {
+        query.createdAt = {};
+        if (filters.startDate) {
+            query.createdAt.$gte = new Date(filters.startDate);
+        }
+        if (filters.endDate) {
+            query.createdAt.$lte = new Date(filters.endDate);
+        }
+    }
+    
+    const orders = await this.find(query).sort({ createdAt: -1 });
+    return orders;
+}
+
 module.exports = mongoose.model('Order', orderSchema);

@@ -19,6 +19,8 @@ const chatbotRoutes = require('./controllers/chatbot')
 const userRoutes = require('./routes/user')
 const carRoutes = require('./routes/car')
 const orderRoutes = require('./routes/order')
+const contactRoutes = require('./routes/contact')
+const adminRoutes = require('./routes/admin')
 
 
 
@@ -68,6 +70,8 @@ app.use('/api/chatbot', chatbotRoutes)
 app.use('/api/user', userRoutes)
 app.use('/api/car', carRoutes)
 app.use('/api/order', orderRoutes)
+app.use('/api/contact', contactRoutes)
+app.use('/api/admin', adminRoutes)
 
 
 // connect to db

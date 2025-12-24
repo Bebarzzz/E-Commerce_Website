@@ -11,6 +11,13 @@ import LoginSignup from './Pages/LoginSignup';
 import Checkout from './Pages/Checkout';
 import OrderConfirmed from './Pages/OrderConfirmed';
 import Contact from './Pages/Contact';
+import AdminLayout from './Components/Admin/Layout/AdminLayout';
+import AdminRoute from './Components/Admin/Auth/AdminRoute';
+import AdminDashboard from './Components/Admin/Pages/AdminDashboard';
+import AdminCarsList from './Components/Admin/Pages/AdminCarsList';
+import AdminCarCreate from './Components/Admin/Pages/AdminCarCreate';
+import AdminCarEdit from './Components/Admin/Pages/AdminCarEdit';
+import AdminOrdersList from './Components/Admin/Pages/AdminOrdersList';
 function App() {
 
   return (
@@ -31,6 +38,13 @@ function App() {
             <Route path='/order-confirmed' element={<OrderConfirmed />} />
             <Route path='/login' element={<LoginSignup />} />
             <Route path='/contact' element={<Contact />} />
+            <Route path='/admin' element={<AdminRoute><AdminLayout /></AdminRoute>}>
+              <Route index element={<AdminDashboard />} />
+              <Route path='cars' element={<AdminCarsList />} />
+              <Route path='cars/new' element={<AdminCarCreate />} />
+              <Route path='cars/:id/edit' element={<AdminCarEdit />} />
+              <Route path='orders' element={<AdminOrdersList />} />
+            </Route>
           </Routes>
           <Chatbot />
         </BrowserRouter>

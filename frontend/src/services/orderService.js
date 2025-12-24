@@ -10,10 +10,11 @@ import { API_ENDPOINTS, apiRequest } from '../config/api';
  */
 export const getAllOrders = async () => {
   try {
-    const orders = await apiRequest(API_ENDPOINTS.GET_ORDERS, {
+    const response = await apiRequest(API_ENDPOINTS.GET_ORDERS, {
       method: 'GET',
     });
-    return orders;
+    // Backend returns { success: true, orders: [...] }
+    return response.orders || [];
   } catch (error) {
     console.error('Error fetching orders:', error);
     throw error;

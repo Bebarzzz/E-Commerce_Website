@@ -12,10 +12,11 @@ const AdminCarForm = ({ initialData, onSubmit, isEdit = false }) => {
         year: new Date().getFullYear(),
         type: 'Sedan',
         transmission: 'Automatic',
-        fuel: 'Petrol',
+        fuel: 'Gasoline',
         price: '',
-        description: '',
-        condition: 'new', // new, used, offer
+        engineCapacity: '',
+        wheelDriveType: 'FWD',
+        condition: 'new', // new, used
         images: [] // User selected files
     });
 
@@ -64,12 +65,13 @@ const AdminCarForm = ({ initialData, onSubmit, isEdit = false }) => {
         const data = new FormData();
         data.append('brand', formData.brand);
         data.append('model', formData.model);
-        data.append('year', formData.year);
+        data.append('manufactureYear', formData.year); // Map year to manufactureYear
         data.append('type', formData.type);
-        data.append('transmission', formData.transmission);
-        data.append('fuel', formData.fuel);
+        data.append('transmissionType', formData.transmission); // Map transmission to transmissionType
+        data.append('engineType', formData.fuel); // Map fuel to engineType
         data.append('price', formData.price);
-        data.append('description', formData.description);
+        data.append('engineCapacity', formData.engineCapacity);
+        data.append('wheelDriveType', formData.wheelDriveType);
         data.append('condition', formData.condition);
 
         // Append images
@@ -124,13 +126,15 @@ const AdminCarForm = ({ initialData, onSubmit, isEdit = false }) => {
 
                 <div style={{ display: 'flex', gap: '20px' }}>
                     <div className="form-group" style={{ flex: 1 }}>
-                        <label>Year</label>
+                        <label>Manufacture Year</label>
                         <input
                             type="number"
                             name="year"
                             className="form-control"
                             value={formData.year}
                             onChange={handleChange}
+                            min="1900"
+                            max={new Date().getFullYear()}
                             required
                         />
                     </div>
@@ -142,6 +146,8 @@ const AdminCarForm = ({ initialData, onSubmit, isEdit = false }) => {
                             className="form-control"
                             value={formData.price}
                             onChange={handleChange}
+                            min="0"
+                            step="0.01"
                             required
                         />
                     </div>
@@ -161,23 +167,59 @@ const AdminCarForm = ({ initialData, onSubmit, isEdit = false }) => {
                     </div>
                     <div className="form-group" style={{ flex: 1 }}>
                         <label>Condition</label>
-                        <select name="condition" className="form-control" value={formData.condition} onChange={handleChange}>
+                        <select name="condition" className="form-control" value={formData.condition} onChange={handleChange} required>
                             <option value="new">New</option>
                             <option value="used">Used</option>
-                            <option value="offer">Offer</option>
                         </select>
                     </div>
                 </div>
 
-                <div className="form-group">
-                    <label>Description</label>
-                    <textarea
-                        name="description"
-                        className="form-control"
-                        rows="4"
-                        value={formData.description}
-                        onChange={handleChange}
-                    ></textarea>
+                <div style={{ display: 'flex', gap: '20px' }}>
+                    <div className="form-group" style={{ flex: 1 }}>
+                        <label>Transmission Type</label>
+                        <select name="transmission" className="form-control" value={formData.transmission} onChange={handleChange} required>
+                            <option value="Automatic">Automatic</option>
+                            <option value="Manual">Manual</option>
+                            <option value="CVT">CVT</option>
+                            <option value="Semi-Automatic">Semi-Automatic</option>
+                        </select>
+                    </div>
+                    <div className="form-group" style={{ flex: 1 }}>
+                        <label>Engine Type</label>
+                        <select name="fuel" className="form-control" value={formData.fuel} onChange={handleChange} required>
+                            <option value="Gasoline">Gasoline</option>
+                            <option value="Diesel">Diesel</option>
+                            <option value="Electric">Electric</option>
+                            <option value="Hybrid">Hybrid</option>
+                            <option value="Plug-in Hybrid">Plug-in Hybrid</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '20px' }}>
+                    <div className="form-group" style={{ flex: 1 }}>
+                        <label>Engine Capacity (L)</label>
+                        <input
+                            type="number"
+                            name="engineCapacity"
+                            className="form-control"
+                            value={formData.engineCapacity}
+                            onChange={handleChange}
+                            min="0.1"
+                            step="0.1"
+                            placeholder="e.g., 2.0, 3.5"
+                            required
+                        />
+                    </div>
+                    <div className="form-group" style={{ flex: 1 }}>
+                        <label>Wheel Drive Type</label>
+                        <select name="wheelDriveType" className="form-control" value={formData.wheelDriveType} onChange={handleChange} required>
+                            <option value="FWD">FWD (Front-Wheel Drive)</option>
+                            <option value="RWD">RWD (Rear-Wheel Drive)</option>
+                            <option value="AWD">AWD (All-Wheel Drive)</option>
+                            <option value="4WD">4WD (Four-Wheel Drive)</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div className="form-group">

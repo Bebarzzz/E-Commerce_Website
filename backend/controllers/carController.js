@@ -70,7 +70,26 @@ const editCar = async (req, res) => {
     const { model, manufactureYear, brand, type, price, engineCapacity, wheelDriveType, engineType, transmissionType, condition } = req.body;
 
     try {
-        const updateData = { model, manufactureYear, brand, type, price, engineCapacity, wheelDriveType, engineType, transmissionType, condition };
+        const updateData = { 
+            model, 
+            brand, 
+            type, 
+            wheelDriveType, 
+            engineType, 
+            transmissionType, 
+            condition 
+        };
+        
+        // Parse numeric fields (FormData sends everything as strings)
+        if (manufactureYear !== undefined) {
+            updateData.manufactureYear = parseInt(manufactureYear);
+        }
+        if (price !== undefined) {
+            updateData.price = parseFloat(price);
+        }
+        if (engineCapacity !== undefined) {
+            updateData.engineCapacity = parseFloat(engineCapacity);
+        }
         
         // Add new images if uploaded
         if (req.files && req.files.length > 0) {

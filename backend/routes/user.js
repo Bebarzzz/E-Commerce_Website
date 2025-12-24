@@ -1,16 +1,23 @@
 const express = require('express')
 const {
     loginUser,
-    signupUser
+    signupUser,
+    getUserProfile,
+    updateUserProfile,
+    changePassword
 } = require('../controllers/userController')
+const { requireAuth } = require('../middleware/requireAuth')
 
 const router = express.Router()
 
 
-// login user
+// Public routes
 router.post('/login', loginUser)
-
-// signup user
 router.post('/signup', signupUser)
+
+// Protected routes - require authentication
+router.get('/profile', requireAuth, getUserProfile)
+router.patch('/profile', requireAuth, updateUserProfile)
+router.patch('/password', requireAuth, changePassword)
 
 module.exports = router

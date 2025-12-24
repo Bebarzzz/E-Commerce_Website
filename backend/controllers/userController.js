@@ -47,9 +47,71 @@ const signupUser = async (req, res) => {
     
 }
 
+// Get user profile
+const getUserProfile = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const user = await User.getProfile(userId);
+        
+        res.status(200).json({
+            success: true,
+            user: user
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            error: error.message
+        });
+    }
+}
+
+// Update user profile
+const updateUserProfile = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const { username, email } = req.body;
+        
+        const user = await User.updateProfile(userId, { username, email });
+        
+        res.status(200).json({
+            success: true,
+            message: 'Profile updated successfully',
+            user: user
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            error: error.message
+        });
+    }
+}
+
+// Change password
+const changePassword = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const { currentPassword, newPassword } = req.body;
+        
+        await User.changePassword(userId, currentPassword, newPassword);
+        
+        res.status(200).json({
+            success: true,
+            message: 'Password changed successfully'
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            error: error.message
+        });
+    }
+}
+
 
 
 module.exports = {
     loginUser,
     signupUser,
+    getUserProfile,
+    updateUserProfile,
+    changePassword
 }

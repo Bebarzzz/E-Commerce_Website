@@ -19,6 +19,9 @@ export const API_ENDPOINTS = {
   GET_ORDER_BY_ID: `${API_BASE_URL}/api/order`,
   UPDATE_ORDER_STATUS: `${API_BASE_URL}/api/order`,
 
+  // Contact endpoints
+  CONTACT: `${API_BASE_URL}/api/contact`,
+
   // Health check
   HEALTH: `${API_BASE_URL}/api/health`,
 };

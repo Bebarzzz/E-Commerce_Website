@@ -26,11 +26,13 @@ describe('AdminCarForm', () => {
     test('submits form with correct data', async () => {
         renderWithRouter(<AdminCarForm onSubmit={mockSubmit} />);
 
-        userEvent.type(screen.getByLabelText(/Brand/i), 'Toyota');
-        userEvent.type(screen.getByLabelText(/Model/i), 'Camry');
-        userEvent.type(screen.getByLabelText(/Year/i), '2022');
-        userEvent.type(screen.getByLabelText(/Price/i), '25000');
-        userEvent.type(screen.getByLabelText(/Description/i), 'Reliable car');
+        await userEvent.type(screen.getByLabelText(/Brand/i), 'Toyota');
+        await userEvent.type(screen.getByLabelText(/Model/i), 'Camry');
+        await userEvent.clear(screen.getByLabelText(/Manufacture Year/i));
+        await userEvent.type(screen.getByLabelText(/Manufacture Year/i), '2022');
+        await userEvent.type(screen.getByLabelText(/Price/i), '25000');
+        await userEvent.type(screen.getByLabelText(/Description/i), 'Reliable car');
+        await userEvent.type(screen.getByLabelText(/Engine Capacity/i), '2.5');
 
         fireEvent.click(screen.getByText(/create Car/i));
 
@@ -54,11 +56,8 @@ describe('AdminCarForm', () => {
         const file = new File(['hello'], 'hello.png', { type: 'image/png' });
         const input = screen.getByLabelText(/Images/i);
 
-        userEvent.upload(input, file);
+        await userEvent.upload(input, file);
 
         expect(global.URL.createObjectURL).toHaveBeenCalled();
-
-        // Submit
-        fireEvent.click(screen.getByText(/create Car/i)); // Need to fill required fields first in real usage, but check validation
     });
 });

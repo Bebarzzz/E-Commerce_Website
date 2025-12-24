@@ -103,9 +103,10 @@ const AdminCarForm = ({ initialData, onSubmit, isEdit = false }) => {
 
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <label>Brand</label>
+                    <label htmlFor="brand">Brand</label>
                     <input
                         type="text"
+                        id="brand"
                         name="brand"
                         className="form-control"
                         value={formData.brand}
@@ -115,9 +116,10 @@ const AdminCarForm = ({ initialData, onSubmit, isEdit = false }) => {
                 </div>
 
                 <div className="form-group">
-                    <label>Model</label>
+                    <label htmlFor="model">Model</label>
                     <input
                         type="text"
+                        id="model"
                         name="model"
                         className="form-control"
                         value={formData.model}
@@ -128,9 +130,10 @@ const AdminCarForm = ({ initialData, onSubmit, isEdit = false }) => {
 
                 <div style={{ display: 'flex', gap: '20px' }}>
                     <div className="form-group" style={{ flex: 1 }}>
-                        <label>Manufacture Year</label>
+                        <label htmlFor="year">Manufacture Year</label>
                         <input
                             type="number"
+                            id="year"
                             name="year"
                             className="form-control"
                             value={formData.year}
@@ -141,9 +144,10 @@ const AdminCarForm = ({ initialData, onSubmit, isEdit = false }) => {
                         />
                     </div>
                     <div className="form-group" style={{ flex: 1 }}>
-                        <label>Price ($)</label>
+                        <label htmlFor="price">Price ($)</label>
                         <input
                             type="number"
+                            id="price"
                             name="price"
                             className="form-control"
                             value={formData.price}
@@ -225,8 +229,9 @@ const AdminCarForm = ({ initialData, onSubmit, isEdit = false }) => {
                 </div>
 
                 <div className="form-group">
-                    <label>Description</label>
+                    <label htmlFor="description">Description</label>
                     <textarea
+                        id="description"
                         name="description"
                         className="form-control"
                         rows="4"
@@ -237,9 +242,10 @@ const AdminCarForm = ({ initialData, onSubmit, isEdit = false }) => {
                 </div>
 
                 <div className="form-group">
-                    <label>Images (Max 5)</label>
+                    <label htmlFor="images">Images (Max 5)</label>
                     <input
                         type="file"
+                        id="images"
                         multiple
                         accept="image/*"
                         className="form-file-input"

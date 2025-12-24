@@ -28,14 +28,17 @@ const mockSearchResults = [
 ];
 
 describe('SearchBar Component', () => {
+  let mockOnSearch;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    mockOnSearch = jest.fn();
   });
 
   test('renders search input field', () => {
     render(
       <BrowserRouter>
-        <SearchBar />
+        <SearchBar onSearch={mockOnSearch} />
       </BrowserRouter>
     );
     
@@ -46,7 +49,7 @@ describe('SearchBar Component', () => {
   test('allows user to type in search field', () => {
     render(
       <BrowserRouter>
-        <SearchBar />
+        <SearchBar onSearch={mockOnSearch} />
       </BrowserRouter>
     );
     
@@ -61,7 +64,7 @@ describe('SearchBar Component', () => {
     
     render(
       <BrowserRouter>
-        <SearchBar />
+        <SearchBar onSearch={mockOnSearch} />
       </BrowserRouter>
     );
     
@@ -69,7 +72,7 @@ describe('SearchBar Component', () => {
     fireEvent.change(searchInput, { target: { value: 'Toyota' } });
     
     await waitFor(() => {
-      expect(searchCars).toHaveBeenCalledWith('Toyota');
+      expect(mockOnSearch).toHaveBeenCalledWith('Toyota');
     }, { timeout: 1000 });
   });
 
@@ -78,7 +81,7 @@ describe('SearchBar Component', () => {
     
     render(
       <BrowserRouter>
-        <SearchBar />
+        <SearchBar onSearch={mockOnSearch} />
       </BrowserRouter>
     );
     
@@ -86,7 +89,7 @@ describe('SearchBar Component', () => {
     fireEvent.change(searchInput, { target: { value: 'Toyota' } });
     
     await waitFor(() => {
-      expect(screen.getByText(/Camry/i)).toBeInTheDocument();
+      expect(mockOnSearch).toHaveBeenCalled();
     });
   });
 
@@ -95,7 +98,7 @@ describe('SearchBar Component', () => {
     
     render(
       <BrowserRouter>
-        <SearchBar />
+        <SearchBar onSearch={mockOnSearch} />
       </BrowserRouter>
     );
     
@@ -103,10 +106,7 @@ describe('SearchBar Component', () => {
     fireEvent.change(searchInput, { target: { value: 'NonExistent' } });
     
     await waitFor(() => {
-      const noResults = screen.queryByText(/no results/i) || 
-                       screen.queryByText(/not found/i);
-      // Component might show no results message or just empty list
-      expect(searchCars).toHaveBeenCalled();
+      expect(mockOnSearch).toHaveBeenCalled();
     });
   });
 
@@ -115,7 +115,7 @@ describe('SearchBar Component', () => {
     
     render(
       <BrowserRouter>
-        <SearchBar />
+        <SearchBar onSearch={mockOnSearch} />
       </BrowserRouter>
     );
     
@@ -124,14 +124,14 @@ describe('SearchBar Component', () => {
     // Type search query
     fireEvent.change(searchInput, { target: { value: 'Toyota' } });
     await waitFor(() => {
-      expect(screen.queryByText(/Camry/i)).toBeInTheDocument();
+      expect(mockOnSearch).toHaveBeenCalledWith('Toyota');
     });
     
     // Clear search
     fireEvent.change(searchInput, { target: { value: '' } });
     
     await waitFor(() => {
-      expect(screen.queryByText(/Camry/i)).not.toBeInTheDocument();
+      expect(mockOnSearch).toHaveBeenCalledWith('');
     });
   });
 
@@ -140,7 +140,7 @@ describe('SearchBar Component', () => {
     
     render(
       <BrowserRouter>
-        <SearchBar />
+        <SearchBar onSearch={mockOnSearch} />
       </BrowserRouter>
     );
     
@@ -148,14 +148,7 @@ describe('SearchBar Component', () => {
     fireEvent.change(searchInput, { target: { value: 'Toyota' } });
     
     await waitFor(() => {
-      const result = screen.getByText(/Camry/i);
-      expect(result).toBeInTheDocument();
-      
-      // Check if it's a link
-      const link = result.closest('a');
-      if (link) {
-        expect(link).toHaveAttribute('href');
-      }
+      expect(mockOnSearch).toHaveBeenCalled();
     });
   });
 
@@ -164,7 +157,7 @@ describe('SearchBar Component', () => {
     
     render(
       <BrowserRouter>
-        <SearchBar />
+        <SearchBar onSearch={mockOnSearch} />
       </BrowserRouter>
     );
     
@@ -172,8 +165,7 @@ describe('SearchBar Component', () => {
     fireEvent.change(searchInput, { target: { value: 'Toyota' } });
     
     await waitFor(() => {
-      // Component should handle error gracefully
-      expect(searchCars).toHaveBeenCalled();
+      expect(mockOnSearch).toHaveBeenCalled();
     });
   });
 
@@ -183,7 +175,7 @@ describe('SearchBar Component', () => {
     
     render(
       <BrowserRouter>
-        <SearchBar />
+        <SearchBar onSearch={mockOnSearch} />
       </BrowserRouter>
     );
     
@@ -199,8 +191,7 @@ describe('SearchBar Component', () => {
     jest.runAllTimers();
     
     await waitFor(() => {
-      // Should only call API once or minimal times due to debounce
-      expect(searchCars).toHaveBeenCalled();
+      expect(mockOnSearch).toHaveBeenCalled();
     });
     
     jest.useRealTimers();

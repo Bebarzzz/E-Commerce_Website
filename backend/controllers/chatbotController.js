@@ -12,9 +12,9 @@ const conversationHistory = new Map();
 // Function to get available cars from MongoDB
 const getAvailableCarsData = async () => {
   try {
-    const cars = await Car.find({ status: 'available' })
-      .select('brand model year price category transmission fuelType seats color images description')
-      .limit(50);
+    const cars = await Car.find({})
+      .select('brand model manufactureYear price type engineType transmissionType condition wheelDriveType engineCapacity images description')
+      .limit(100);
     return cars;
   } catch (error) {
     console.error('Error fetching cars from database:', error);
@@ -28,16 +28,42 @@ const formatCarsContext = (cars) => {
     return "Currently, there are no cars available in our inventory.";
   }
   
-  return cars.map((car, index) => 
-    `${index + 1}. ${car.year} ${car.brand} ${car.model}
+  // Separate cars by condition
+  const newCars = cars.filter(car => car.condition === 'new');
+  const usedCars = cars.filter(car => car.condition === 'used');
+  
+  let context = `We have ${cars.length} vehicles in our inventory:\n\n`;
+  
+  // Format new cars section
+  if (newCars.length > 0) {
+    context += `NEW CARS (${newCars.length} vehicles):\n`;
+    context += newCars.map((car, index) => 
+      `${index + 1}. ${car.manufactureYear} ${car.brand} ${car.model}
    - Price: $${car.price.toLocaleString()}
-   - Category: ${car.category}
-   - Transmission: ${car.transmission}
-   - Fuel Type: ${car.fuelType}
-   - Seats: ${car.seats}
-   - Color: ${car.color}
+   - Type: ${car.type}
+   - Engine: ${car.engineCapacity}L ${car.engineType}
+   - Transmission: ${car.transmissionType}
+   - Drive Type: ${car.wheelDriveType}
    ${car.description ? `- Description: ${car.description}` : ''}`
-  ).join('\n\n');
+    ).join('\n\n');
+    context += '\n\n';
+  }
+  
+  // Format used cars section
+  if (usedCars.length > 0) {
+    context += `USED CARS (${usedCars.length} vehicles):\n`;
+    context += usedCars.map((car, index) => 
+      `${index + 1}. ${car.manufactureYear} ${car.brand} ${car.model}
+   - Price: $${car.price.toLocaleString()}
+   - Type: ${car.type}
+   - Engine: ${car.engineCapacity}L ${car.engineType}
+   - Transmission: ${car.transmissionType}
+   - Drive Type: ${car.wheelDriveType}
+   ${car.description ? `- Description: ${car.description}` : ''}`
+    ).join('\n\n');
+  }
+  
+  return context;
 };
 
 // System prompt for the chatbot (supports both Arabic and English)
@@ -53,14 +79,18 @@ const getSystemPrompt = (carsContext, language) => {
 - إذا لم تكن السيارة المطلوبة متوفرة، اقترح بدائل مناسبة
 - أجب على أسئلة عامة عن السيارات، لكن ركز على مخزوننا
 
+لدينا قسمين رئيسيين:
+1. السيارات الجديدة: سيارات جديدة تماماً بضمان كامل
+2. السيارات المستعملة: سيارات مفحوصة بعناية بحالة ممتازة
+
 المخزون الحالي:
 ${carsContext}
 
 عند التوصية بسيارات:
-1. اسأل عن احتياجات العميل (فئة السيارة، الميزانية، الاستخدام)
-2. قدم خيارات محددة من مخزوننا
+1. اسأل عن احتياجات العميل (نوع السيارة، الميزانية، جديدة أم مستعملة)
+2. قدم خيارات محددة من مخزوننا مع ذكر ما إذا كانت جديدة أم مستعملة
 3. اشرح لماذا كل خيار مناسب
-4. قدم تفاصيل السعر والمواصفات
+4. قدم تفاصيل السعر والمواصفات (سعة المحرك، ناقل الحركة، نوع الدفع)
 5. اعرض جدولة اختبار قيادة أو زيارة المعرض`;
   } else {
     return `You are an AI sales assistant for a car dealership. Your job is to help customers find the perfect car from our inventory.
@@ -73,14 +103,18 @@ Important guidelines:
 - If a requested car is not available, suggest suitable alternatives
 - Answer general car questions, but focus on our inventory
 
+We have two main sections:
+1. New Cars: Brand new vehicles with full warranty
+2. Used Cars: Carefully inspected pre-owned vehicles in excellent condition
+
 Current Inventory:
 ${carsContext}
 
 When recommending cars:
-1. Ask about customer needs (car type, budget, usage)
-2. Provide specific options from our inventory
+1. Ask about customer needs (car type, budget, new or used preference)
+2. Provide specific options from our inventory, mentioning if they're new or used
 3. Explain why each option is suitable
-4. Include pricing and specifications
+4. Include pricing and specifications (engine capacity, transmission, drive type)
 5. Offer to schedule a test drive or showroom visit`;
   }
 };

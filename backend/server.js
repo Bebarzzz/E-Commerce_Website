@@ -15,7 +15,7 @@ process.env.PORT = process.env.PORT || 4000;
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 //import files 
-const chatbotRoutes = require('./controllers/chatbot')
+const chatbotRoutes = require('./routes/chatbot')
 const userRoutes = require('./routes/user')
 const carRoutes = require('./routes/car')
 const orderRoutes = require('./routes/order')
